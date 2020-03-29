@@ -40,11 +40,14 @@ function randInRange(f, c)
 }
 
 var socket = io("http://localhost:3000");
-    // use your socket
-    socket.on("welcome", (message) => {
-        console.log(message);
-    }
-)
+
+socket.on('connect', function() {
+    player = 0;
+
+    socket.emit('control', 'ready');
+    socket.emit('join', '');
+
+});
 
 var game = new Phaser.Game(config);
 
