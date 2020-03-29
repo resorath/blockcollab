@@ -52,15 +52,15 @@ socket.on('terminal', function(message) {
     console.log(message)
 })
 
-socket.on('control', function(message) {
+socket.on('control', function(msg) {
 
-    if(message.command == "assignplayer")
+    if(msg.command == "assignplayer")
     {
-        console.log("Assigned player " + message.player);
-        player = message.player;
+        console.log("Assigned player " + msg.player);
+        player = msg.player;
     }
 
-    if(message.command == "startgame")
+    if(msg.command == "startgame")
     {
         console.log("Starting game...");
         game = new Phaser.Game(config);

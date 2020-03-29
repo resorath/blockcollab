@@ -17,6 +17,9 @@ module.exports = {
   
       // what round it is
       this.round = 0;
+
+      // the board
+      this.board = {};
   
       // each player's hand
       this.spells = {

@@ -1,16 +1,22 @@
 var helpers = require('./helpers');
 var util = require('./util');
 var gamevars = require('./gamevars');
+var gameboard = require('./gameboard');
+var gems = require ('./gems');
 
 module.exports = {
 
     startGame: function(game)
     {
         // set round 1
-        agame.round = 1;
+        game.round = 1;
 
         // start timer
-	      this.activateTurnTimer(agame);
+        this.activateTurnTimer(game);
+        
+        console.log("Starting game")
+
+        gameboard.createBoard(12, 12, gems.gems, game);
     },
 
     quitGame: function(game)

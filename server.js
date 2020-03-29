@@ -259,6 +259,8 @@ io.on('connection', function(socket){
         //agame.p2socket.promptCallback = execution.pickDecks;
   
         agame.isNewGame = false;
+
+        execution.startGame(agame);
   
       
       }
