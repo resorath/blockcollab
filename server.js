@@ -106,13 +106,6 @@ io.on('connection', function(socket){
   
     }
   
-      if(msg == 'showsetup')
-      {
-        socket.emit('terminal', 'To start a new game, enter a unique game name or leave blank and press enter for matchmaking.\nTo join a friend\'s game, enter their game name.\nTo rejoin a game you disconnected from, enter the game name you left.\n');
-      
-        socket.emit('control', { command: 'prompt', prompt: 'Game name> '})
-      }
-  
   
     });
   

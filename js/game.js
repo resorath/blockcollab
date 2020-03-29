@@ -1,10 +1,6 @@
 var globals = {
     width: 1900,
-    height: 1050,
-    opponentposition: {
-        x: 1850,
-        y: 525
-    }
+    height: 1050
 }
 
 var config = {
@@ -34,6 +30,9 @@ var config = {
 };
 
 var rng = new Phaser.Math.RandomDataGenerator();
+var player = 0;
+var game = {};
+
 function randInRange(f, c)
 {
     return rng.frac() * (c - f + 1) + f;
@@ -42,12 +41,63 @@ function randInRange(f, c)
 var socket = io("http://localhost:3000");
 
 socket.on('connect', function() {
-    player = 0;
-
     socket.emit('control', 'ready');
+
+    // Use matchmaking for now
     socket.emit('join', '');
 
 });
 
-var game = new Phaser.Game(config);
+socket.on('terminal', function(message) {
+    console.log(message)
+})
+
+socket.on('control', function(message) {
+
+    if(message.command == "assignplayer")
+    {
+        console.log("Assigned player " + message.player);
+        player = message.player;
+    }
+
+    if(message.command == "startgame")
+    {
+        console.log("Starting game...");
+        game = new Phaser.Game(config);
+        
+    }
+
+    if(msg.command == "roomfull")
+    {
+    }
+
+    if(msg.command == "opponentleft")
+    {
+    }
+
+    if(msg.command == "resumegame")
+    {
+    }
+
+    if(msg.command == "suspend")
+    {
+    }
+
+    if(msg.command == "resume")
+    {
+    }
+
+    if(msg.command == "prompt")
+    {
+    }
+
+    if(msg.command == "endgame")
+    {
+    }
+
+    if(msg.command == "serverrestart")
+    {
+    }
+
+})
 
