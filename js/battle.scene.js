@@ -44,9 +44,41 @@ battle.create = function()
         // If horizontal drag lock is set, only move horizontal
         if(battle.dragState.currentDragLock == 'horizontal')
         {
+
             // don't go beyond 80 pixels
             if(battle.dragState.startX - dragX <= battle.dragwidth && battle.dragState.startX - dragX >= -battle.dragwidth)
+            {
+                // grab self coordinates
+                var selfx = gameObject.data.get('grid-x');
+                var selfy = gameObject.data.get('grid-y');
+
+                // moving right
+                if(gameObject.x < dragX)
+                {
+                    if(selfx == battle.board[0].length - 1)
+                        return;
+
+                    var neighbour = battle.board[selfx + 1][selfy].sprite;
+
+                    var distance = Math.abs(gameObject.x - dragX);
+                    
+                    neighbour.x = neighbour.x - distance;
+                }
+                // moving left
+                else if(gameObject.x > dragX)
+                {
+                    if(selfx == 0)
+                        return;
+
+                    var neighbour = battle.board[selfx - 1][selfy].sprite;
+
+                    var distance = Math.abs(gameObject.x - dragX);
+                    
+                    neighbour.x = neighbour.x + distance;
+                }
                 gameObject.x = dragX;
+            }
+
         }
         // If vertical drag lock is set, only move vertical
         else if(battle.dragState.currentDragLock == 'vertical')
@@ -128,6 +160,10 @@ battle.populateInitialGrid = function()
         {
             var sprite = this.add.sprite(i * 80, j * 80, battle.board[i][j].imagePath).setOrigin(0, 0).setInteractive();
             this.input.setDraggable(sprite);
+            sprite.setDataEnabled();
+            sprite.data.set('grid-x', i);
+            sprite.data.set('grid-y', j);
+            battle.board[i][j].sprite = sprite;
         }
     }
 
