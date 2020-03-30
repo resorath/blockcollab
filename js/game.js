@@ -43,11 +43,16 @@ function randInRange(f, c)
     return rng.frac() * (c - f + 1) + f;
 }
 
-var socket = io("http://localhost:3000");
+var socket = io("http://10.0.1.20:3000");
+
+socket.io.on('connect_error', function(err) {
+    // handle server error here
+    document.write('Error connecting to server');
+  });
 
 socket.on('connect', function() {
+    console.log(socket.connected);
     socket.emit('control', 'ready');
-
     // Use matchmaking for now
     socket.emit('join', '');
 

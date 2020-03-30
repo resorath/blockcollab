@@ -7,8 +7,15 @@ battle.boardState = {
     ready: false,
     initiallyPopulated: false,
     dirty: false,
-    currentDragLock: 'none'
 };
+battle.dragState = {
+
+    currentDragLock: 'none',
+    startX: 0,
+    startY: 0
+}
+
+battle.dragwidth = 80;
 
 battle.preload = function()
 {
@@ -34,21 +41,32 @@ battle.create = function()
         delta.x = Math.abs(gameObject.x - dragX);
         delta.y = Math.abs(gameObject.y - dragY);
 
-        if(battle.boardState.currentDragLock == 'horizontal')
+        // If horizontal drag lock is set, only move horizontal
+        if(battle.dragState.currentDragLock == 'horizontal')
         {
-            gameObject.x = dragX;
+            // don't go beyond 80 pixels
+            if(battle.dragState.startX - dragX <= battle.dragwidth && battle.dragState.startX - dragX >= -battle.dragwidth)
+                gameObject.x = dragX;
         }
-        else if(battle.boardState.currentDragLock == 'vertical')
+        // If vertical drag lock is set, only move vertical
+        else if(battle.dragState.currentDragLock == 'vertical')
         {
-            gameObject.y = dragY;
+            // don't go beyond 80 pixels
+            if(battle.dragState.startY - dragY <= battle.dragwidth && battle.dragState.startY - dragY >= -battle.dragwidth)
+                gameObject.y = dragY;
         }
+        // If no drag lock has been set, determine which one to set based on initial movements
         else
         {
+            // store original coords
+            battle.dragState.startX = gameObject.x;
+            battle.dragState.startY = gameObject.y;
+
             // determine drag
             if(delta.x >= delta.y)
-                battle.boardState.currentDragLock = 'horizontal';
+                battle.dragState.currentDragLock = 'horizontal';
             else
-                battle.boardState.currentDragLock = 'vertical';
+                battle.dragState.currentDragLock = 'vertical';
 
         }
 
@@ -57,7 +75,48 @@ battle.create = function()
 
     this.input.on('dragend', function (pointer, gameObject)
     {
-        battle.boardState.currentDragLock = 'none';
+        if(battle.dragState.currentDragLock == 'horizontal')
+        {
+            // snap lock to new location X (left)
+            if(battle.dragState.startX - gameObject.x >= (battle.dragwidth / 2))
+            {
+                gameObject.x = battle.dragState.startX - battle.dragwidth;
+            }
+            // snap lock to new location X (right)
+            else if(battle.dragState.startX + gameObject.x >= (battle.dragwidth / 2))
+            {
+                gameObject.x = battle.dragState.startX + battle.dragwidth;
+            }
+            // snap lock to old location (not enough drag) X
+            else
+            {
+                gameObject.x = battle.dragState.startX
+            }
+        }
+
+        else if(battle.dragState.currentDragLock == 'vertical')
+        {
+            // snap lock to new location Y (down)
+            if(battle.dragState.startY - gameObject.y >= (battle.dragwidth / 2))
+            {
+                gameObject.y = battle.dragState.startY - battle.dragwidth;
+            }
+            // snap lock to new location Y (up)
+            else if(battle.dragState.startY + gameObject.y >= (battle.dragwidth / 2))
+            {
+                gameObject.y = battle.dragState.startY + battle.dragwidth;
+            }
+            // snap lock to old location (not enough drag) Y
+            else
+            {
+                gameObject.y = battle.dragState.startY
+            }
+        }
+
+        
+        battle.dragState.currentDragLock = 'none';
+
+
     });
 },
 
