@@ -6,7 +6,8 @@ battle.board = {}
 battle.boardState = {
     ready: false,
     initiallyPopulated: false,
-    dirty: false
+    dirty: false,
+    currentDragLock: 'none'
 };
 
 battle.preload = function()
@@ -22,11 +23,41 @@ battle.preload = function()
 
 battle.create = function()
 {
+    this.input.on('dragstart', function (pointer, gameObject)
+    {
+
+    });
+
     this.input.on('drag', function (pointer, gameObject, dragX, dragY) {
+        
+        var delta = {};
+        delta.x = Math.abs(gameObject.x - dragX);
+        delta.y = Math.abs(gameObject.y - dragY);
 
-        gameObject.x = dragX;
-        gameObject.y = dragY;
+        if(battle.boardState.currentDragLock == 'horizontal')
+        {
+            gameObject.x = dragX;
+        }
+        else if(battle.boardState.currentDragLock == 'vertical')
+        {
+            gameObject.y = dragY;
+        }
+        else
+        {
+            // determine drag
+            if(delta.x >= delta.y)
+                battle.boardState.currentDragLock = 'horizontal';
+            else
+                battle.boardState.currentDragLock = 'vertical';
 
+        }
+
+
+    });
+
+    this.input.on('dragend', function (pointer, gameObject)
+    {
+        battle.boardState.currentDragLock = 'none';
     });
 },
 
