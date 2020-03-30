@@ -2,6 +2,8 @@ var battle = new Phaser.Scene('Battle');
 
 battle.gems = {}
 
+battle.board = {}
+
 battle.preload = function()
 {
     this.load.image('gems/red', 'img/gems/red.png');

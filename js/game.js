@@ -31,7 +31,12 @@ var config = {
 
 var rng = new Phaser.Math.RandomDataGenerator();
 var player = 0;
-var game = {};
+
+
+
+
+var game = new Phaser.Game(config);
+
 
 function randInRange(f, c)
 {
@@ -63,7 +68,6 @@ socket.on('control', function(msg) {
     if(msg.command == "startgame")
     {
         console.log("Starting game...");
-        game = new Phaser.Game(config);
         
     }
 
@@ -100,4 +104,11 @@ socket.on('control', function(msg) {
     }
 
 })
+
+socket.on('initialBoardState', function(message) {
+    
+    console.log("Receiving boardstate")
+    battle.board = message;
+
+});
 

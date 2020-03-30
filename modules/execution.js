@@ -3,6 +3,7 @@ var util = require('./util');
 var gamevars = require('./gamevars');
 var gameboard = require('./gameboard');
 var gems = require ('./gems');
+var speaker = require('./speaker');
 
 module.exports = {
 
@@ -17,6 +18,8 @@ module.exports = {
         console.log("Starting game")
 
         gameboard.createBoard(12, 12, gems.gems, game);
+
+        speaker.sendInitialBoardState(game);
     },
 
     quitGame: function(game)
