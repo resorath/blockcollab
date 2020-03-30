@@ -109,6 +109,7 @@ socket.on('initialBoardState', function(message) {
     
     console.log("Receiving boardstate")
     battle.board = message;
+    battle.boardState.ready = true;
 
 });
 
