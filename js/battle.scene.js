@@ -38,13 +38,13 @@ battle.create = function()
     this.input.on('drag', function (pointer, gameObject, dragX, dragY) {
         
         var delta = {};
-        delta.x = Math.abs(gameObject.x - dragX);
-        delta.y = Math.abs(gameObject.y - dragY);
+        delta.x = gameObject.x - dragX;
+        // 0 = no movement, negative = right, positive = left
 
-        // If horizontal drag lock is set, only move horizontal
-        if(battle.dragState.currentDragLock == 'horizontal')
+        delta.y = gameObject.y - dragY;
+        // 0 = no movement, negative = up, positive = down
+        if(false)
         {
-
             // don't go beyond 80 pixels
             if(battle.dragState.startX - dragX <= battle.dragwidth && battle.dragState.startX - dragX >= -battle.dragwidth)
             {
@@ -80,11 +80,33 @@ battle.create = function()
             }
 
         }
+
         // If vertical drag lock is set, only move vertical
-        else if(battle.dragState.currentDragLock == 'vertical')
+        if(battle.dragState.currentDragLock == 'left')
         {
             // don't go beyond 80 pixels
-            if(battle.dragState.startY - dragY <= battle.dragwidth && battle.dragState.startY - dragY >= -battle.dragwidth)
+            if(battle.dragState.startX - dragX <= battle.dragwidth && battle.dragState.startX - dragX >= 0)
+                gameObject.x = dragX;
+        }
+        // If vertical drag lock is set, only move vertical
+        else if(battle.dragState.currentDragLock == 'right')
+        {
+            // don't go beyond 80 pixels
+            if(battle.dragState.startX - dragX <= 0 && battle.dragState.startX - dragX >= -battle.dragwidth)
+                gameObject.x = dragX;
+        }
+        // If vertical drag lock is set, only move vertical
+        else if(battle.dragState.currentDragLock == 'up')
+        {
+            // don't go beyond 80 pixels
+            if(battle.dragState.startY - dragY <= battle.dragwidth && battle.dragState.startY - dragY >= 0)
+                gameObject.y = dragY;
+        }
+        // If vertical drag lock is set, only move vertical
+        else if(battle.dragState.currentDragLock == 'down')
+        {
+            // don't go beyond 80 pixels
+            if(battle.dragState.startY - dragY <= 0 && battle.dragState.startY - dragY >= -battle.dragwidth)
                 gameObject.y = dragY;
         }
         // If no drag lock has been set, determine which one to set based on initial movements
@@ -95,10 +117,14 @@ battle.create = function()
             battle.dragState.startY = gameObject.y;
 
             // determine drag
-            if(delta.x >= delta.y)
-                battle.dragState.currentDragLock = 'horizontal';
-            else
-                battle.dragState.currentDragLock = 'vertical';
+            if(delta.x > 0)
+                battle.dragState.currentDragLock = 'left';
+            else if(delta.x < 0)
+                battle.dragState.currentDragLock = 'right';
+            else if(delta.y > 0)
+                battle.dragState.currentDragLock = 'up';
+            else if(delta.y < 0)
+                battle.dragState.currentDragLock = 'down';
 
         }
 
@@ -107,15 +133,23 @@ battle.create = function()
 
     this.input.on('dragend', function (pointer, gameObject)
     {
-        if(battle.dragState.currentDragLock == 'horizontal')
+        if(battle.dragState.currentDragLock == 'left')
         {
             // snap lock to new location X (left)
             if(battle.dragState.startX - gameObject.x >= (battle.dragwidth / 2))
             {
                 gameObject.x = battle.dragState.startX - battle.dragwidth;
             }
+            else
+            {
+                gameObject.x = battle.dragState.startX
+            }
+
+        }
+        else if(battle.dragState.currentDragLock == 'right')
+        {
             // snap lock to new location X (right)
-            else if(battle.dragState.startX + gameObject.x >= (battle.dragwidth / 2))
+            if(battle.dragState.startX - gameObject.x <= -(battle.dragwidth / 2))
             {
                 gameObject.x = battle.dragState.startX + battle.dragwidth;
             }
@@ -126,19 +160,27 @@ battle.create = function()
             }
         }
 
-        else if(battle.dragState.currentDragLock == 'vertical')
+        else if(battle.dragState.currentDragLock == 'up')
         {
-            // snap lock to new location Y (down)
+            // snap lock to new location X (right)
             if(battle.dragState.startY - gameObject.y >= (battle.dragwidth / 2))
             {
                 gameObject.y = battle.dragState.startY - battle.dragwidth;
             }
-            // snap lock to new location Y (up)
-            else if(battle.dragState.startY + gameObject.y >= (battle.dragwidth / 2))
+            // snap lock to old location (not enough drag) X
+            else
+            {
+                gameObject.y = battle.dragState.startY
+            }
+
+        }else if(battle.dragState.currentDragLock == 'down')
+        {
+            // snap lock to new location X (right)
+            if(battle.dragState.startY - gameObject.y <= -(battle.dragwidth / 2))
             {
                 gameObject.y = battle.dragState.startY + battle.dragwidth;
             }
-            // snap lock to old location (not enough drag) Y
+            // snap lock to old location (not enough drag) X
             else
             {
                 gameObject.y = battle.dragState.startY
