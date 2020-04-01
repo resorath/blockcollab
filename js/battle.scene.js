@@ -43,35 +43,6 @@ battle.create = function()
 
         delta.y = gameObject.y - dragY;
         // 0 = no movement, negative = up, positive = down
-        if(false)
-        {
-            // don't go beyond 80 pixels
-            if(battle.dragState.startX - dragX <= battle.dragwidth && battle.dragState.startX - dragX >= -battle.dragwidth)
-            {
-                // grab self coordinates
-                
-
-                // moving right
-                if(gameObject.x < dragX)
-                {
-
-                }
-                // moving left
-                else if(gameObject.x > dragX)
-                {
-                    if(selfx == 0)
-                        return;
-
-                    var neighbour = battle.board[selfx - 1][selfy].sprite;
-
-                    var distance = Math.abs(gameObject.x - dragX);
-                    
-                    neighbour.x = neighbour.x + distance;
-                }
-                gameObject.x = dragX;
-            }
-
-        }
 
         var selfx = gameObject.data.get('grid-x');
         var selfy = gameObject.data.get('grid-y');
@@ -91,13 +62,18 @@ battle.create = function()
 
             var neighbour = battle.board[selfx + 1][selfy].sprite;
 
-            var distance = Math.abs(gameObject.x - dragX);
-            
-            neighbour.x = neighbour.x - distance;
+
 
             // don't go beyond 80 pixels
             if(battle.dragState.startX - dragX <= 0 && battle.dragState.startX - dragX >= -battle.dragwidth)
+            {
+
+                var distance = Math.abs(gameObject.x - dragX);
+
                 gameObject.x = dragX;
+            
+                neighbour.x = neighbour.x - distance;
+            }
         }
         // If vertical drag lock is set, only move vertical
         else if(battle.dragState.currentDragLock == 'up')
