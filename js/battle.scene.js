@@ -49,20 +49,12 @@ battle.create = function()
             if(battle.dragState.startX - dragX <= battle.dragwidth && battle.dragState.startX - dragX >= -battle.dragwidth)
             {
                 // grab self coordinates
-                var selfx = gameObject.data.get('grid-x');
-                var selfy = gameObject.data.get('grid-y');
+                
 
                 // moving right
                 if(gameObject.x < dragX)
                 {
-                    if(selfx == battle.board[0].length - 1)
-                        return;
 
-                    var neighbour = battle.board[selfx + 1][selfy].sprite;
-
-                    var distance = Math.abs(gameObject.x - dragX);
-                    
-                    neighbour.x = neighbour.x - distance;
                 }
                 // moving left
                 else if(gameObject.x > dragX)
@@ -81,6 +73,9 @@ battle.create = function()
 
         }
 
+        var selfx = gameObject.data.get('grid-x');
+        var selfy = gameObject.data.get('grid-y');
+
         // If vertical drag lock is set, only move vertical
         if(battle.dragState.currentDragLock == 'left')
         {
@@ -91,6 +86,15 @@ battle.create = function()
         // If vertical drag lock is set, only move vertical
         else if(battle.dragState.currentDragLock == 'right')
         {
+            if(selfx == battle.board[0].length - 1)
+                return;
+
+            var neighbour = battle.board[selfx + 1][selfy].sprite;
+
+            var distance = Math.abs(gameObject.x - dragX);
+            
+            neighbour.x = neighbour.x - distance;
+
             // don't go beyond 80 pixels
             if(battle.dragState.startX - dragX <= 0 && battle.dragState.startX - dragX >= -battle.dragwidth)
                 gameObject.x = dragX;
@@ -148,15 +152,36 @@ battle.create = function()
         }
         else if(battle.dragState.currentDragLock == 'right')
         {
+            var selfx = gameObject.data.get('grid-x');
+            var selfy = gameObject.data.get('grid-y');
+
             // snap lock to new location X (right)
             if(battle.dragState.startX - gameObject.x <= -(battle.dragwidth / 2))
             {
                 gameObject.x = battle.dragState.startX + battle.dragwidth;
+
+                var neighbour = battle.board[selfx + 1][selfy];
+                
+                neighbour.sprite.x = battle.dragState.startX;
+
+                // update locations
+                var self = battle.board[selfx][selfy];
+
+                self.sprite.data.set('grid-x', selfx + 1)
+                neighbour.sprite.data.set('grid-x', selfx)
+
+                battle.board[selfx][selfy] = neighbour
+                battle.board[selfx + 1][selfy] = self
+
             }
             // snap lock to old location (not enough drag) X
             else
             {
                 gameObject.x = battle.dragState.startX
+
+                var neighbour = battle.board[selfx + 1][selfy].sprite;
+                
+                neighbour.x = battle.dragState.startX + battle.dragwidth;
             }
         }
 
