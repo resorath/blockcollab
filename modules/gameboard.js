@@ -17,6 +17,29 @@ module.exports = {
             }
         }
 
+        // iterate through board and regenerate flagged gems
+        // Continue until no more gems are flagged
+        var nosequence = true;
+        do
+        {
+            nosequence = true;   
+            this.boardFlagSequence(board);
+            
+            for(var i = 0; i < rows; i++)
+            {
+                for(var j = 0; j < cols; j++)
+                {
+                    if(board[i][j].insequence)
+                    {
+                        nosequence = false;
+                        var pick = util.RandomInt(0, gemKeys.length - 1);
+                        board[i][j] = JSON.parse(JSON.stringify(gems[gemKeys[pick]]));
+                    }
+                }
+            }
+        } while(!nosequence);
+
+
         game.board = board;
     },
     
@@ -25,7 +48,7 @@ module.exports = {
         return ((coord1.x == coord2.x && Math.abs(coord1.y - coord2.y) == 1) || (coord1.y == coord2.y && Math.abs(coord1.x - coord2.x) == 1));
     },
 
-    boardHasSequence: function(board)
+    boardFlagSequence: function(board)
     {
         console.log("checking sequence");
         console.log(board[0][0].name);
@@ -65,7 +88,7 @@ module.exports = {
                         break;
                 }
 
-                // check horizontal right
+                // check vertical down
                 for(var i = (y + 1); i < board[x].length; i++)
                 {
                     if(board[x][i].name == self)

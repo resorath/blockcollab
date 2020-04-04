@@ -31,7 +31,7 @@ module.exports = {
             var opposite = helpers.getOppositePlayerSocket(socket);
             speaker.sendBoardMove(opposite, swap);
 
-            gameboard.boardHasSequence(game.board);
+            gameboard.boardFlagSequence(game.board);
 
         }
         else
