@@ -13,7 +13,7 @@ var config = {
     },
     backgroundColor: '#000000',
     physics: {
-        default: 'matter',
+        default: 'arcade',
         matter: {
             gravity: {
                 scale: 0

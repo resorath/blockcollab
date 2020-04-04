@@ -1,4 +1,5 @@
 var battle = new Phaser.Scene('Battle');
+var Matter = Phaser.Physics.Matter.Matter;
 
 battle.gems = {}
 
@@ -347,9 +348,23 @@ battle.remoteSwap = function(swap)
     this.board[activeCoord.x][activeCoord.y] = neighbour;
     this.board[neighbourCoord.x][neighbourCoord.y] = active;
 
-    active.sprite.x = neighbourCoord.x * battle.dragwidth ;
+    this.tweens.add({
+        targets: active.sprite,
+        x: neighbourCoord.x * battle.dragwidth,
+        y: neighbourCoord.y * battle.dragwidth,
+        duration: 200
+    });
+
+    this.tweens.add({
+        targets: neighbour.sprite,
+        x: activeCoord.x * battle.dragwidth,
+        y: activeCoord.y * battle.dragwidth,
+        duration: 200
+    });
+
+    /*active.sprite.x = neighbourCoord.x * battle.dragwidth ;
     active.sprite.y = neighbourCoord.y * battle.dragwidth ;
     neighbour.sprite.x = activeCoord.x * battle.dragwidth ;
     neighbour.sprite.y = activeCoord.y * battle.dragwidth ;
-
+*/
 }
