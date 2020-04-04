@@ -1,5 +1,6 @@
 var helpers = require('./helpers');
-var speaker = require('./speaker')
+var speaker = require('./speaker');
+var gameboard = require('./gameboard');
 
 module.exports = {
 
@@ -16,8 +17,7 @@ module.exports = {
         }
 
         // verify neighbours
-        if((r_active.x == r_neighbour.x && Math.abs(r_active.y - r_neighbour.y) == 1)
-        || (r_active.y == r_neighbour.y && Math.abs(r_active.x - r_neighbour.x) == 1))
+        if(gameboard.isNeighbour(r_active, r_neighbour))
         {
             console.log("valid swap");
 
@@ -25,11 +25,13 @@ module.exports = {
             var s_neighbour = game.board[r_neighbour.x][r_neighbour.y]
 
             game.board[r_neighbour.x][r_neighbour.y] = s_active;
-            game.board[r_neighbour.x][r_neighbour.y] = s_neighbour;
+            game.board[r_active.x][r_active.y] = s_neighbour;
 
             // broadcast changes
             var opposite = helpers.getOppositePlayerSocket(socket);
-            speaker.sendBoardMove(opposite, swap)
+            speaker.sendBoardMove(opposite, swap);
+
+            gameboard.boardHasSequence(game.board);
 
         }
         else
