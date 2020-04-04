@@ -362,9 +362,12 @@ battle.remoteSwap = function(swap)
         duration: 200
     });
 
-    /*active.sprite.x = neighbourCoord.x * battle.dragwidth ;
-    active.sprite.y = neighbourCoord.y * battle.dragwidth ;
-    neighbour.sprite.x = activeCoord.x * battle.dragwidth ;
-    neighbour.sprite.y = activeCoord.y * battle.dragwidth ;
-*/
+}
+
+battle.remoteDestroy = function(coords)
+{
+    var o = this.board[coords.x][coords.y];
+
+    o.sprite.destroy();
+    this.board[coords.x][coords.y] = null;
 }

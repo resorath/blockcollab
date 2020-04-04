@@ -123,3 +123,8 @@ socket.on('move', function(swap) {
     battle.remoteSwap(swap);
 });
 
+socket.on('destroygem', function(coords) {
+    console.log("Receive destroy " + JSON.stringify(coords))
+    battle.remoteDestroy(coords);
+});
+
