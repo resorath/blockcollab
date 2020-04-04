@@ -30,6 +30,21 @@ battle.preload = function()
 
 battle.create = function()
 {
+    this.registerDragHandles();
+},
+
+
+battle.update = function() 
+{
+    if(battle.boardState.ready && !battle.boardState.initiallyPopulated)
+        this.populateInitialGrid();
+
+
+},
+
+
+battle.registerDragHandles = function()
+{
     this.input.on('dragstart', function (pointer, gameObject)
     {
 
@@ -135,15 +150,14 @@ battle.create = function()
             var selfCoords = battle.getGemCoordinateFromSprite(gameObject);
 
             if(selfCoords.x != 0)
-            {
+            {                   
+                var neighbour = battle.board[selfCoords.x - 1][selfCoords.y];
+                var self = battle.board[selfCoords.x][selfCoords.y];
                 // snap lock to new location X (left)
                 if(battle.dragState.startX - gameObject.x >= (battle.dragwidth / 2))
                 {
                     gameObject.x = battle.dragState.startX - battle.dragwidth;
 
-                    var neighbour = battle.board[selfCoords.x - 1][selfCoords.y];
-                    var self = battle.board[selfCoords.x][selfCoords.y];
-                    
                     neighbour.sprite.x = battle.dragState.startX;
 
                     // update locations
@@ -154,8 +168,6 @@ battle.create = function()
                 else
                 {
                     gameObject.x = battle.dragState.startX;
-
-                    var neighbour = battle.board[selfCoords.x - 1][selfCoords.y];
 
                     neighbour.sprite.x = battle.dragState.startX - battle.dragwidth;
                 }
@@ -168,15 +180,14 @@ battle.create = function()
 
             if(selfCoords.x != battle.board[0].length - 1)
             {
+                var neighbour = battle.board[selfCoords.x + 1][selfCoords.y];
+                var self = battle.board[selfCoords.x][selfCoords.y];
+
                 // snap lock to new location X (right)
                 if(battle.dragState.startX - gameObject.x <= -(battle.dragwidth / 2))
                 {
                     gameObject.x = battle.dragState.startX + battle.dragwidth;
 
-                    var neighbour = battle.board[selfCoords.x + 1][selfCoords.y];
-                    var self = battle.board[selfCoords.x][selfCoords.y];
-
-                    
                     neighbour.sprite.x = battle.dragState.startX;
 
                     // update locations
@@ -187,8 +198,6 @@ battle.create = function()
                 else
                 {
                     gameObject.x = battle.dragState.startX;
-
-                    var neighbour = battle.board[selfCoords.x + 1][selfCoords.y];
 
                     neighbour.sprite.x = battle.dragState.startX + battle.dragwidth;
                 }
@@ -201,13 +210,14 @@ battle.create = function()
 
             if(selfCoords.y != 0)
             {
+                var neighbour = battle.board[selfCoords.x][selfCoords.y - 1];
+                var self = battle.board[selfCoords.x][selfCoords.y];
+
                 // snap lock to new location Y (up)
                 if(battle.dragState.startY - gameObject.y >= (battle.dragwidth / 2))
                 {
                     gameObject.y = battle.dragState.startY - battle.dragwidth;
 
-                    var neighbour = battle.board[selfCoords.x][selfCoords.y - 1];
-                    var self = battle.board[selfCoords.x][selfCoords.y];
 
                     
                     neighbour.sprite.y = battle.dragState.startY;
@@ -220,8 +230,6 @@ battle.create = function()
                 else
                 {
                     gameObject.y = battle.dragState.startY;
-
-                    var neighbour = battle.board[selfCoords.x][selfCoords.y - 1];
 
                     neighbour.sprite.y = battle.dragState.startY - battle.dragwidth;
                 }
@@ -233,15 +241,14 @@ battle.create = function()
 
             if(selfCoords.y != battle.board[selfCoords.x][0].length - 1)
             {
+                var neighbour = battle.board[selfCoords.x][selfCoords.y + 1];
+                var self = battle.board[selfCoords.x][selfCoords.y];
+
                 // snap lock to new location Y (down)
                 if(battle.dragState.startY - gameObject.y <= -(battle.dragwidth / 2))
                 {
                     gameObject.y = battle.dragState.startY + battle.dragwidth;
 
-                    var neighbour = battle.board[selfCoords.x][selfCoords.y + 1];
-                    var self = battle.board[selfCoords.x][selfCoords.y];
-
-                    
                     neighbour.sprite.y = battle.dragState.startY;
 
                     // update locations
@@ -253,8 +260,6 @@ battle.create = function()
                 {
                     gameObject.y = battle.dragState.startY;
 
-                    var neighbour = battle.board[selfCoords.x][selfCoords.y + 1];
-
                     neighbour.sprite.y = battle.dragState.startY + battle.dragwidth;
                 }
             }
@@ -265,12 +270,20 @@ battle.create = function()
 
 
     });
-},
+}
 
 battle.swap = function(active, neighbour)
 {
     var activeCoord = this.getGemCoordinateFromObject(active)
     var neighbourCoord = this.getGemCoordinateFromObject(neighbour)
+
+    var command = {
+        'action': 'swap',
+        'activeCoord': activeCoord,
+        'neighbourCoord': neighbourCoord
+    }
+
+    socket.emit('command', command);
 
     battle.board[activeCoord.x][activeCoord.y] = neighbour;
     battle.board[neighbourCoord.x][neighbourCoord.y] = active;
@@ -321,12 +334,22 @@ battle.populateInitialGrid = function()
 
     this.boardState.initiallyPopulated = true;
     
-}
-
-battle.update = function() 
-{
-    if(battle.boardState.ready && !battle.boardState.initiallyPopulated)
-        this.populateInitialGrid();
-
-
 };
+
+battle.remoteSwap = function(swap)
+{
+    var activeCoord = swap.activeCoord;
+    var neighbourCoord = swap.neighbourCoord;
+
+    var active = this.board[activeCoord.x][activeCoord.y];
+    var neighbour = this.board[neighbourCoord.x][neighbourCoord.y]
+
+    this.board[activeCoord.x][activeCoord.y] = neighbour;
+    this.board[neighbourCoord.x][neighbourCoord.y] = active;
+
+    active.sprite.x = neighbourCoord.x * battle.dragwidth ;
+    active.sprite.y = neighbourCoord.y * battle.dragwidth ;
+    neighbour.sprite.x = activeCoord.x * battle.dragwidth ;
+    neighbour.sprite.y = activeCoord.y * battle.dragwidth ;
+
+}

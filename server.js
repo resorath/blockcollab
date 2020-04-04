@@ -9,6 +9,7 @@ var gems = require('./modules/gems');
 var gameboard = require('./modules/gameboard');
 var util = require('./modules/util');
 var execution = require('./modules/execution');
+var cfunc = require('./modules/commands');
 var EventEmitter = require('events');
 
 gamevars.games = [];
@@ -276,7 +277,30 @@ io.on('connection', function(socket){
 
 function parseCommand(command, socket)
 {
+  // check if the prompt callback override is set, and execute that instead
+  // the callback function must accept the entire command
+  if(socket.promptCallback != null)
+  {
+    console.log("prompt callback set for " + socket.id + " to " + socket.promptCallback.name);
+    socket.promptCallback(command, socket);
+    return;
+  }
 
+  var action = command.action;
+
+  if(action == null)
+  {
+    console.log("Bad message");
+    return;
+  }
+
+  if(typeof cfunc[action] === 'function')
+    cfunc[action](socket, command)
+  else
+  {
+    socket.emit('terminal', 'unknown command: \'' + action + '\' try \'help\'\n');
+    console.log("Command " + command + " not recognized by " + socket.game + ":" + socket.player);
+  }
 }
 
 

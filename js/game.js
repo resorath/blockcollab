@@ -118,3 +118,8 @@ socket.on('initialBoardState', function(message) {
 
 });
 
+socket.on('move', function(swap) {
+    console.log("Receive move " + JSON.stringify(swap));
+    battle.remoteSwap(swap);
+});
+
