@@ -46,19 +46,25 @@ battle.create = function()
 
         var selfcoords = battle.getGemCoordinateFromSprite(gameObject);
 
-        // If vertical drag lock is set, only move vertical
         if(battle.dragState.currentDragLock == 'left')
         {
-            // don't go beyond 80 pixels
-            if(battle.dragState.startX - dragX <= battle.dragwidth && battle.dragState.startX - dragX >= 0)
-                gameObject.x = dragX;
+            if(selfcoords.x != 0)
+            {
+                var neighbour = battle.board[selfcoords.x - 1][selfcoords.y].sprite;
+
+                // don't go beyond 80 pixels
+                if(battle.dragState.startX - dragX >= 0 && battle.dragState.startX - dragX <= battle.dragwidth)
+                {
+                    var distance = Math.abs(gameObject.x - dragX);
+                    gameObject.x = dragX;       
+                    neighbour.x = neighbour.x + distance;
+                }
+            }
         }
-        // If vertical drag lock is set, only move vertical
         else if(battle.dragState.currentDragLock == 'right')
         {
             if(selfcoords.x != battle.board[0].length - 1)
             {
-
                 var neighbour = battle.board[selfcoords.x + 1][selfcoords.y].sprite;
 
                 // don't go beyond 80 pixels
@@ -70,19 +76,35 @@ battle.create = function()
                 }
             }
         }
-        // If vertical drag lock is set, only move vertical
         else if(battle.dragState.currentDragLock == 'up')
         {
-            // don't go beyond 80 pixels
-            if(battle.dragState.startY - dragY <= battle.dragwidth && battle.dragState.startY - dragY >= 0)
-                gameObject.y = dragY;
+            if(selfcoords.y != 0)
+            {
+                var neighbour = battle.board[selfcoords.x][selfcoords.y - 1].sprite;
+
+                // don't go beyond 80 pixels
+                if(battle.dragState.startY - dragY >= 0 && battle.dragState.startY - dragY <= battle.dragwidth)
+                {
+                    var distance = Math.abs(gameObject.y - dragY);
+                    gameObject.y = dragY;       
+                    neighbour.y = neighbour.y + distance;
+                }
+            }
         }
-        // If vertical drag lock is set, only move vertical
         else if(battle.dragState.currentDragLock == 'down')
         {
-            // don't go beyond 80 pixels
-            if(battle.dragState.startY - dragY <= 0 && battle.dragState.startY - dragY >= -battle.dragwidth)
-                gameObject.y = dragY;
+            if(selfcoords.y != battle.board[selfcoords.x][0].length - 1)
+            {
+                var neighbour = battle.board[selfcoords.x][selfcoords.y + 1].sprite;
+
+                // don't go beyond 80 pixels
+                if(battle.dragState.startY - dragY <= 0 && battle.dragState.startY - dragY >= -battle.dragwidth)
+                {
+                    var distance = Math.abs(gameObject.y - dragY);
+                    gameObject.y = dragY;       
+                    neighbour.y = neighbour.y - distance;
+                }
+            }
         }
         // If no drag lock has been set, determine which one to set based on initial movements
         else
@@ -110,14 +132,33 @@ battle.create = function()
     {
         if(battle.dragState.currentDragLock == 'left')
         {
-            // snap lock to new location X (left)
-            if(battle.dragState.startX - gameObject.x >= (battle.dragwidth / 2))
+            var selfCoords = battle.getGemCoordinateFromSprite(gameObject);
+
+            if(selfCoords.x != 0)
             {
-                gameObject.x = battle.dragState.startX - battle.dragwidth;
-            }
-            else
-            {
-                gameObject.x = battle.dragState.startX
+                // snap lock to new location X (left)
+                if(battle.dragState.startX - gameObject.x >= (battle.dragwidth / 2))
+                {
+                    gameObject.x = battle.dragState.startX - battle.dragwidth;
+
+                    var neighbour = battle.board[selfCoords.x - 1][selfCoords.y];
+                    var self = battle.board[selfCoords.x][selfCoords.y];
+                    
+                    neighbour.sprite.x = battle.dragState.startX;
+
+                    // update locations
+                    battle.swap(self, neighbour)
+
+                }
+                // snap lock to old location (not enough drag) X
+                else
+                {
+                    gameObject.x = battle.dragState.startX;
+
+                    var neighbour = battle.board[selfCoords.x - 1][selfCoords.y];
+
+                    neighbour.sprite.x = battle.dragState.startX - battle.dragwidth;
+                }
             }
 
         }
@@ -133,14 +174,13 @@ battle.create = function()
                     gameObject.x = battle.dragState.startX + battle.dragwidth;
 
                     var neighbour = battle.board[selfCoords.x + 1][selfCoords.y];
+                    var self = battle.board[selfCoords.x][selfCoords.y];
+
                     
                     neighbour.sprite.x = battle.dragState.startX;
 
                     // update locations
-                    var self = battle.board[selfCoords.x][selfCoords.y];
-
-                    battle.board[selfCoords.x][selfCoords.y] = neighbour;
-                    battle.board[selfCoords.x + 1][selfCoords.y] = self;
+                    battle.swap(self, neighbour)
 
                 }
                 // snap lock to old location (not enough drag) X
@@ -157,28 +197,66 @@ battle.create = function()
 
         else if(battle.dragState.currentDragLock == 'up')
         {
-            // snap lock to new location X (right)
-            if(battle.dragState.startY - gameObject.y >= (battle.dragwidth / 2))
+            var selfCoords = battle.getGemCoordinateFromSprite(gameObject);
+
+            if(selfCoords.y != 0)
             {
-                gameObject.y = battle.dragState.startY - battle.dragwidth;
-            }
-            // snap lock to old location (not enough drag) X
-            else
-            {
-                gameObject.y = battle.dragState.startY
+                // snap lock to new location Y (up)
+                if(battle.dragState.startY - gameObject.y >= (battle.dragwidth / 2))
+                {
+                    gameObject.y = battle.dragState.startY - battle.dragwidth;
+
+                    var neighbour = battle.board[selfCoords.x][selfCoords.y - 1];
+                    var self = battle.board[selfCoords.x][selfCoords.y];
+
+                    
+                    neighbour.sprite.y = battle.dragState.startY;
+
+                    // update locations
+                    battle.swap(self, neighbour)
+
+                }
+                // snap lock to old location (not enough drag) X
+                else
+                {
+                    gameObject.y = battle.dragState.startY;
+
+                    var neighbour = battle.board[selfCoords.x][selfCoords.y - 1];
+
+                    neighbour.sprite.y = battle.dragState.startY - battle.dragwidth;
+                }
             }
 
         }else if(battle.dragState.currentDragLock == 'down')
         {
-            // snap lock to new location X (right)
-            if(battle.dragState.startY - gameObject.y <= -(battle.dragwidth / 2))
+            var selfCoords = battle.getGemCoordinateFromSprite(gameObject);
+
+            if(selfCoords.y != battle.board[selfCoords.x][0].length - 1)
             {
-                gameObject.y = battle.dragState.startY + battle.dragwidth;
-            }
-            // snap lock to old location (not enough drag) X
-            else
-            {
-                gameObject.y = battle.dragState.startY
+                // snap lock to new location Y (down)
+                if(battle.dragState.startY - gameObject.y <= -(battle.dragwidth / 2))
+                {
+                    gameObject.y = battle.dragState.startY + battle.dragwidth;
+
+                    var neighbour = battle.board[selfCoords.x][selfCoords.y + 1];
+                    var self = battle.board[selfCoords.x][selfCoords.y];
+
+                    
+                    neighbour.sprite.y = battle.dragState.startY;
+
+                    // update locations
+                    battle.swap(self, neighbour)
+
+                }
+                // snap lock to old location (not enough drag) X
+                else
+                {
+                    gameObject.y = battle.dragState.startY;
+
+                    var neighbour = battle.board[selfCoords.x][selfCoords.y + 1];
+
+                    neighbour.sprite.y = battle.dragState.startY + battle.dragwidth;
+                }
             }
         }
 
@@ -188,6 +266,31 @@ battle.create = function()
 
     });
 },
+
+battle.swap = function(active, neighbour)
+{
+    var activeCoord = this.getGemCoordinateFromObject(active)
+    var neighbourCoord = this.getGemCoordinateFromObject(neighbour)
+
+    battle.board[activeCoord.x][activeCoord.y] = neighbour;
+    battle.board[neighbourCoord.x][neighbourCoord.y] = active;
+
+    //@todo update server
+}
+
+battle.getGemCoordinateFromObject = function(o)
+{
+    for(var i = 0; i < battle.board.length; i++)
+    {
+        for(var j=0; j < battle.board[i].length; j++)
+        {
+            if(battle.board[i][j] == o)
+            {
+                return {x: i, y: j};
+            }
+        }
+    }
+}
 
 battle.getGemCoordinateFromSprite = function(sprite)
 {
