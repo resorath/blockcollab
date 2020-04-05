@@ -33,16 +33,9 @@ module.exports = {
 
             gameboard.boardFlagSequence(game.board);
 
-            for(var i = 0; i < game.board.length; i++)
-            {
-                for(var j = 0; j < game.board[i].length; j++)
-                {
-                    if(game.board[i][j].insequence)
-                    {
-                        game.io.to(game.name).emit('destroygem', {x: i, y: j});
-                    }
-                }
-            }
+            gameboard.boardCleanupAndNotify(game);
+
+            gameboard.boardDropGemsAndBackfillAndNotify(game);
 
         }
         else

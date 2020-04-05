@@ -371,3 +371,33 @@ battle.remoteDestroy = function(coords)
     o.sprite.destroy();
     this.board[coords.x][coords.y] = null;
 }
+
+battle.remoteDrop = function(coords)
+{
+    var o = this.board[coords.x][coords.y];
+
+    this.board[coords.x][coords.y + 1] = o;
+    this.board[coords.x][coords.y] = null;
+
+    o.sprite.y = o.sprite.y + battle.dragwidth
+    /*this.tweens.add({
+        targets: o.sprite,
+        y: o.y + (o.y * battle.dragwidth),
+        duration: 200
+    });*/
+
+}
+
+battle.addGem = function(gemdata)
+{
+    var i = gemdata.x;
+    var j = gemdata.y;
+    var gem = gemdata.gem;
+
+    battle.board[i][j] = gem;
+
+    var sprite = this.add.sprite(i * 80, j * 80, battle.board[i][j].imagePath).setOrigin(0, 0).setInteractive();
+    this.input.setDraggable(sprite);
+    battle.board[i][j].sprite = sprite;
+
+}

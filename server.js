@@ -207,6 +207,7 @@ io.on('connection', function(socket){
       newgame.p1socket = socket;
       newgame.isNewGame = true;
       newgame.name = roomname;
+      newgame.gems = gems.gems;
   
       socket.player = 1;
       socket.game = newgame.name;

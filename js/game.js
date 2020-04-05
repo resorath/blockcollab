@@ -47,7 +47,7 @@ var socket = io("http://10.0.1.20:3000");
 
 socket.io.on('connect_error', function(err) {
     // handle server error here
-    document.write('Error connecting to server');
+    console.log('Error connecting to server');
   });
 
 socket.on('connect', function() {
@@ -127,4 +127,14 @@ socket.on('destroygem', function(coords) {
     console.log("Receive destroy " + JSON.stringify(coords))
     battle.remoteDestroy(coords);
 });
+
+socket.on('drop', function(coords) {
+    console.log("Receive drop" + JSON.stringify(coords));
+    battle.remoteDrop(coords);
+});
+
+socket.on('newgem', function(gemdata) {
+    console.log("Receive gem " + JSON.stringify(gemdata));
+    battle.addGem(gemdata);
+})
 

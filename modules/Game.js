@@ -20,6 +20,9 @@ module.exports = {
 
       // the board
       this.board = {};
+
+      // the gems
+      this.gems = null;
   
       // each player's hand
       this.spells = {

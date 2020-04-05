@@ -5,15 +5,13 @@ module.exports = {
     createBoard: function(rows, cols, gems, game)
     {
         var board = new Array(rows);
-        var gemKeys = Object.keys(gems);
 
         for(var i = 0; i < rows; i++)
         {
             board[i] = new Array(cols);
             for(var j = 0; j < cols; j++)
             {
-                var pick = util.RandomInt(0, gemKeys.length - 1);
-                board[i][j] = JSON.parse(JSON.stringify(gems[gemKeys[pick]]));
+                board[i][j] = this.getRandomGem(gems);
             }
         }
 
@@ -32,8 +30,7 @@ module.exports = {
                     if(board[i][j].insequence)
                     {
                         nosequence = false;
-                        var pick = util.RandomInt(0, gemKeys.length - 1);
-                        board[i][j] = JSON.parse(JSON.stringify(gems[gemKeys[pick]]));
+                        board[i][j] = this.getRandomGem(gems);
                     }
                 }
             }
@@ -42,12 +39,73 @@ module.exports = {
 
         game.board = board;
     },
+
+    getRandomGem: function(gems)
+    {
+        
+        var gemKeys = Object.keys(gems);
+        var pick = util.RandomInt(0, gemKeys.length - 1);
+        return JSON.parse(JSON.stringify(gems[gemKeys[pick]]));
+    },
     
     isNeighbour: function(coord1, coord2)
     {
         return ((coord1.x == coord2.x && Math.abs(coord1.y - coord2.y) == 1) || (coord1.y == coord2.y && Math.abs(coord1.x - coord2.x) == 1));
     },
 
+    // delete gems that are flagged as sequenced
+    boardCleanupAndNotify: function(game)
+    {
+        // identify destroyed gems and notify
+        for(var i = 0; i < game.board.length; i++)
+        {
+            for(var j = 0; j < game.board[i].length; j++)
+            {
+                if(game.board[i][j].insequence)
+                {
+                    game.board[i][j] = null;
+                    game.io.to(game.name).emit('destroygem', {x: i, y: j});
+                }
+            }
+        }
+    },
+
+    // moves gems down and generates new ones to take the place
+    boardDropGemsAndBackfillAndNotify(game, gems)
+    {
+        var nullfound = false;
+        do
+        {
+            nullfound = false;
+
+            for(var x = 0; x < game.board.length && !nullfound; x++)
+            {
+                // don't need to check bottom row, will never be null below it
+                for(var y = 0; y < game.board[x].length - 1 && !nullfound; y++)
+                {
+                    // check if neighbour below is null
+                    if(game.board[x][y+1] == null)
+                    {
+                        nullfound = true;
+                        game.board[x][y+1] = game.board[x][y];
+                        game.board[x][y] = null;
+                        game.io.to(game.name).emit('drop', {x, y});
+                        console.log("dropping " + JSON.stringify({x, y}));
+
+                        if(y == 0)
+                        {
+                            game.board[x][y] = this.getRandomGem(game.gems)
+                            game.io.to(game.name).emit('newgem', {x, y, gem: game.board[x][y]});
+                        }
+
+                    }
+                }
+            }
+        }while(nullfound);
+
+    },
+
+    // flags sequenced gems
     boardFlagSequence: function(board)
     {
         console.log("checking sequence");
