@@ -40,6 +40,8 @@ battle.update = function()
     if(battle.boardState.ready && !battle.boardState.initiallyPopulated)
         this.populateInitialGrid();
 
+    if(!battle.animationRunning && battle.animationQueue.length > 0)
+        battle.runAnimationQueue();
 
 },
 
@@ -400,4 +402,36 @@ battle.addGem = function(gemdata)
     this.input.setDraggable(sprite);
     battle.board[i][j].sprite = sprite;
 
+}
+
+battle.animationQueue = [];
+battle.animationRunning = false;
+
+battle.queueAnimation = function(callback, delay, params)
+{
+    if(params == null)
+        params = {}
+    this.animationQueue.push({callback, delay, params});
+}
+
+battle.runAnimationQueue = function()
+{
+    if(battle.animationQueue.length == 0)
+        return;
+
+    if(battle.animationRunning)
+        return;
+
+
+    var animObject = battle.animationQueue.shift();
+    var delay = animObject.delay;
+    var callback = animObject.callback;
+    var params = animObject.params;
+
+    battle.animationRunning = true;
+    callback(params);
+
+    window.setTimeout(function() {
+        battle.animationRunning = false;
+    }, delay);
 }
