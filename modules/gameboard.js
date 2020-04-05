@@ -90,14 +90,13 @@ module.exports = {
                         game.board[x][y+1] = game.board[x][y];
                         game.board[x][y] = null;
                         game.io.to(game.name).emit('drop', {x, y});
-                        console.log("dropping " + JSON.stringify({x, y}));
 
-                        if(y == 0)
-                        {
-                            game.board[x][y] = this.getRandomGem(game.gems)
-                            game.io.to(game.name).emit('newgem', {x, y, gem: game.board[x][y]});
-                        }
+                    }
 
+                    if(game.board[x][y] == null && y == 0)
+                    {
+                        game.board[x][y] = this.getRandomGem(game.gems)
+                        game.io.to(game.name).emit('newgem', {x, y, gem: game.board[x][y]});
                     }
                 }
             }
