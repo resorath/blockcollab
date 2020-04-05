@@ -341,77 +341,89 @@ battle.populateInitialGrid = function()
 
 battle.remoteSwap = function(swap)
 {
-    var activeCoord = swap.activeCoord;
-    var neighbourCoord = swap.neighbourCoord;
+    this.queueAnimation(function(params) {
+        var activeCoord = params.swap.activeCoord;
+        var neighbourCoord = params.swap.neighbourCoord;
 
-    var active = this.board[activeCoord.x][activeCoord.y];
-    var neighbour = this.board[neighbourCoord.x][neighbourCoord.y]
+        var active = battle.board[activeCoord.x][activeCoord.y];
+        var neighbour = battle.board[neighbourCoord.x][neighbourCoord.y]
 
-    this.board[activeCoord.x][activeCoord.y] = neighbour;
-    this.board[neighbourCoord.x][neighbourCoord.y] = active;
+        battle.board[activeCoord.x][activeCoord.y] = neighbour;
+        battle.board[neighbourCoord.x][neighbourCoord.y] = active;
 
-    this.tweens.add({
-        targets: active.sprite,
-        x: neighbourCoord.x * battle.dragwidth,
-        y: neighbourCoord.y * battle.dragwidth,
-        duration: 200
-    });
+        battle.tweens.add({
+            targets: active.sprite,
+            x: neighbourCoord.x * battle.dragwidth,
+            y: neighbourCoord.y * battle.dragwidth,
+            duration: 200
+        });
 
-    this.tweens.add({
-        targets: neighbour.sprite,
-        x: activeCoord.x * battle.dragwidth,
-        y: activeCoord.y * battle.dragwidth,
-        duration: 200
-    });
+        battle.tweens.add({
+            targets: neighbour.sprite,
+            x: activeCoord.x * battle.dragwidth,
+            y: activeCoord.y * battle.dragwidth,
+            duration: 200
+        });
+    }, 'swap', 0, 1000, {swap}); 
 
 }
 
 battle.remoteDestroy = function(coords)
 {
-    var o = this.board[coords.x][coords.y];
+    this.queueAnimation(function(params) {
+        var o = battle.board[params.coords.x][params.coords.y];
 
-    o.sprite.destroy();
-    this.board[coords.x][coords.y] = null;
+        battle.board[params.coords.x][params.coords.y] = null;
+
+        o.sprite.destroy();
+    }, 'destroy', 0, 500, {coords});
 }
 
 battle.remoteDrop = function(coords)
 {
-    var o = this.board[coords.x][coords.y];
+    //o.sprite.y = o.sprite.y + battle.dragwidth
+    this.queueAnimation(function(params) {
+        var o = battle.board[params.coords.x][params.coords.y];
 
-    this.board[coords.x][coords.y + 1] = o;
-    this.board[coords.x][coords.y] = null;
+        battle.board[params.coords.x][params.coords.y + 1] = o;
+        battle.board[params.coords.x][params.coords.y] = null;
 
-    o.sprite.y = o.sprite.y + battle.dragwidth
-    /*this.tweens.add({
-        targets: o.sprite,
-        y: o.y + (o.y * battle.dragwidth),
-        duration: 200
-    });*/
+        //o.sprite.y = o.sprite.y + battle.dragwidth
+        
+        battle.tweens.add({
+            targets: o.sprite,
+            y: (o.sprite.y + battle.dragwidth),
+            duration: 200
+        });
+    }, 'drop', 20, 500, {coords});
 
 }
 
 battle.addGem = function(gemdata)
 {
-    var i = gemdata.x;
-    var j = gemdata.y;
-    var gem = gemdata.gem;
+    this.queueAnimation(function(params) {
+        console.log(params);
+        var i = params.gemdata.x;
+        var j = params.gemdata.y;
+        var gem = params.gemdata.gem;
+    
+        battle.board[i][j] = gem;
 
-    battle.board[i][j] = gem;
-
-    var sprite = this.add.sprite(i * 80, j * 80, battle.board[i][j].imagePath).setOrigin(0, 0).setInteractive();
-    this.input.setDraggable(sprite);
-    battle.board[i][j].sprite = sprite;
+        var sprite = battle.add.sprite(i * 80, j * 80, battle.board[i][j].imagePath).setOrigin(0, 0).setInteractive();
+        battle.input.setDraggable(sprite);
+        battle.board[i][j].sprite = sprite;
+    }, 'addgem', 0, 200, {gemdata});
 
 }
 
 battle.animationQueue = [];
 battle.animationRunning = false;
 
-battle.queueAnimation = function(callback, delay, params)
+battle.queueAnimation = function(callback, chainIdentifier, chainDelay, chainEndDelay, params)
 {
     if(params == null)
         params = {}
-    this.animationQueue.push({callback, delay, params});
+    this.animationQueue.push({callback, chainIdentifier, chainDelay, chainEndDelay, params});
 }
 
 battle.runAnimationQueue = function()
@@ -424,7 +436,21 @@ battle.runAnimationQueue = function()
 
 
     var animObject = battle.animationQueue.shift();
-    var delay = animObject.delay;
+    
+    var chainIdentifier = animObject.chainIdentifier;   // name of chain for chained animations
+    var chainDelay = animObject.chainDelay;             // delay between chained animations
+    var chainEndDelay = animObject.chainEndDelay;       // delay if next animation is not in the chain
+
+    var delay = 0;
+
+    // if the next animation is part of the chain, use the chain delay
+    if(battle.animationQueue.length > 0 && battle.animationQueue[0].chainIdentifier == animObject.chainIdentifier)
+        delay = chainDelay;
+    // otherwise use the chain end delay
+    else
+        delay = chainEndDelay;
+
+
     var callback = animObject.callback;
     var params = animObject.params;
 
