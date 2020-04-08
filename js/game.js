@@ -1,6 +1,6 @@
 var globals = {
     width: 1024,
-    height: 768
+    height: 1024
 }
 
 var config = {

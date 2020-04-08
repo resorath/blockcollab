@@ -34,14 +34,15 @@ battle.create = function()
     this.registerDragHandles();
 },
 
-
 battle.update = function() 
 {
+
     if(battle.boardState.ready && !battle.boardState.initiallyPopulated)
         this.populateInitialGrid();
 
     if(!battle.animationRunning && battle.animationQueue.length > 0)
         battle.runAnimationQueue();
+
 
 },
 
@@ -376,7 +377,7 @@ battle.remoteDestroy = function(coords)
         battle.board[params.coords.x][params.coords.y] = null;
 
         o.sprite.destroy();
-    }, 'destroy', 0, 500, {coords});
+    }, 'destroy', 1, 1, {coords});
 }
 
 battle.remoteDrop = function(coords)
@@ -389,6 +390,9 @@ battle.remoteDrop = function(coords)
         battle.board[params.coords.x][params.coords.y] = null;
 
         //o.sprite.y = o.sprite.y + battle.dragwidth
+
+        if(o == null)
+            return;
         
         battle.tweens.add({
             targets: o.sprite,
@@ -398,7 +402,7 @@ battle.remoteDrop = function(coords)
                 return t*t;
             }
         });
-    }, 'drop', 20, 0, {coords});
+    }, 'drop', 1, 1, {coords});
 
 }
 
@@ -421,7 +425,7 @@ battle.addGem = function(gemdata)
             duration: 200
         });
 
-    }, 'addgem', 0, 0, {gemdata});
+    }, 'addgem', 1, 1, {gemdata});
 
 }
 
@@ -487,5 +491,6 @@ battle.runAnimationQueue = function()
 
     window.setTimeout(function() {
         battle.animationRunning = false;
+        //battle.runAnimationQueue();
     }, delay);
 }

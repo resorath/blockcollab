@@ -31,11 +31,16 @@ module.exports = {
             var opposite = helpers.getOppositePlayerSocket(socket);
             speaker.sendBoardMove(opposite, swap);
 
-            gameboard.boardFlagSequence(game.board);
+            var sequencesRemain = false;
+            do
+            {
+                sequencesRemain = gameboard.boardFlagSequence(game.board);
 
-            gameboard.boardCleanupAndNotify(game);
+                gameboard.boardCleanupAndNotify(game);
 
-            gameboard.boardDropGemsAndBackfillAndNotify(game);
+                gameboard.boardDropGemsAndBackfillAndNotify(game);
+            }
+            while(sequencesRemain);
 
         }
         else

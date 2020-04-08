@@ -111,6 +111,7 @@ module.exports = {
     {
         console.log("checking sequence");
         console.log(board[0][0].name);
+        var foundAtLeastOneSequence = false;
         for(var x=0; x < board.length; x++)
         {
             for(var y=0; y < board[x].length; y++)
@@ -160,12 +161,15 @@ module.exports = {
                 if(hcount >= 3 || vcount >=3)
                 {
                     board[x][y].insequence = true;
+                    foundAtLeastOneSequence = true;
                     //console.log("detected colour: " + self + " x: " + x + " y: " + y);
                 }
 
 
             }
         }
+
+        return foundAtLeastOneSequence;
 
     }
 
