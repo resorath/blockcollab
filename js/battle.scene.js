@@ -329,7 +329,7 @@ battle.populateInitialGrid = function()
     {
         for(var j=0; j < battle.board[i].length; j++)
         {
-            var sprite = this.add.sprite(i * 80, j * 80, battle.board[i][j].imagePath).setOrigin(0, 0).setInteractive();
+            var sprite = this.physics.add.sprite(i * battle.dragwidth, j * battle.dragwidth, battle.board[i][j].imagePath).setOrigin(0, 0).setInteractive();
             this.input.setDraggable(sprite);
             battle.board[i][j].sprite = sprite;
         }
@@ -392,38 +392,50 @@ battle.remoteDrop = function(coords)
         
         battle.tweens.add({
             targets: o.sprite,
-            y: (o.sprite.y + battle.dragwidth),
-            duration: 200
+            y: ((params.coords.y * battle.dragwidth) + battle.dragwidth),
+            duration: 200,
+            ease: function(t) {
+                return t*t;
+            }
         });
-    }, 'drop', 20, 500, {coords});
+    }, 'drop', 20, 0, {coords});
 
 }
 
 battle.addGem = function(gemdata)
 {
     this.queueAnimation(function(params) {
-        console.log(params);
         var i = params.gemdata.x;
         var j = params.gemdata.y;
         var gem = params.gemdata.gem;
     
         battle.board[i][j] = gem;
 
-        var sprite = battle.add.sprite(i * 80, j * 80, battle.board[i][j].imagePath).setOrigin(0, 0).setInteractive();
+        var sprite = battle.physics.add.sprite(i * 80, -1 * battle.dragwidth, battle.board[i][j].imagePath).setOrigin(0, 0).setInteractive();
         battle.input.setDraggable(sprite);
         battle.board[i][j].sprite = sprite;
-    }, 'addgem', 0, 200, {gemdata});
+
+        battle.tweens.add({
+            targets: sprite,
+            y: 0,
+            duration: 200
+        });
+
+    }, 'addgem', 0, 0, {gemdata});
 
 }
 
 battle.animationQueue = [];
 battle.animationRunning = false;
+battle.animationSorted = false;
+battle.animationSortingOrder = ['swap', 'destroy', 'drop', 'addgem'];
 
 battle.queueAnimation = function(callback, chainIdentifier, chainDelay, chainEndDelay, params)
 {
     if(params == null)
-        params = {}
+        params = {};
     this.animationQueue.push({callback, chainIdentifier, chainDelay, chainEndDelay, params});
+    this.animationSorted = false;
 }
 
 battle.runAnimationQueue = function()
@@ -434,6 +446,22 @@ battle.runAnimationQueue = function()
     if(battle.animationRunning)
         return;
 
+    var t = [];
+    if(!battle.animationSorted)
+    {
+        /*
+        for(var i = 0; i < battle.animationSortingOrder.length; i++)
+        {
+            var f = (battle.animationQueue.filter(function(e) {
+                return (e.chainIdentifier == battle.animationSortingOrder[i]);
+            }));
+            t = t.concat(f);
+        }
+        
+        battle.animationQueue = t;*/
+
+        battle.animationSorted = true;
+    }
 
     var animObject = battle.animationQueue.shift();
     
@@ -444,7 +472,7 @@ battle.runAnimationQueue = function()
     var delay = 0;
 
     // if the next animation is part of the chain, use the chain delay
-    if(battle.animationQueue.length > 0 && battle.animationQueue[0].chainIdentifier == animObject.chainIdentifier)
+    if(battle.animationQueue.length > 0 && battle.animationQueue[0].chainIdentifier == chainIdentifier)
         delay = chainDelay;
     // otherwise use the chain end delay
     else

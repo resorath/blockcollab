@@ -14,16 +14,9 @@ var config = {
     backgroundColor: '#000000',
     physics: {
         default: 'arcade',
-        matter: {
-            gravity: {
-                scale: 0
-            },
-            plugins: {
-                attractors: true
-            },
-            debug: true,
-            debugShowInternalEdges: true,
-            debugShowConvexHulls: true
+        arcade: {
+            gravity: {y: 0},
+            debug: false,
         }
     },
     scene: [battle]
