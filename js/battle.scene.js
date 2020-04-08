@@ -402,7 +402,7 @@ battle.remoteDrop = function(coords)
                 return t*t;
             }
         });
-    }, 'drop', 1, 1, {coords});
+    }, 'adddrop', 1, 300, {coords});
 
 }
 
@@ -425,7 +425,7 @@ battle.addGem = function(gemdata)
             duration: 200
         });
 
-    }, 'addgem', 1, 1, {gemdata});
+    }, 'adddrop', 1, 300, {gemdata});
 
 }
 
@@ -481,6 +481,8 @@ battle.runAnimationQueue = function()
     // otherwise use the chain end delay
     else
         delay = chainEndDelay;
+        
+    battle.animationPreviousChain = chainIdentifier;
 
 
     var callback = animObject.callback;
