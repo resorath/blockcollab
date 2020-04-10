@@ -1,0 +1,8 @@
+{
+    "appService.zipIgnorePattern": [
+        "node_modules{,/**}",
+        ".vscode{,/**}"
+    ],
+    "appService.defaultWebAppToDeploy": "/subscriptions/46a2fa1a-4a9d-4bf0-9524-c0da2ec4e253/resourceGroups/appsvc_linux_centralus/providers/Microsoft.Web/sites/blockcollab",
+    "appService.deploySubpath": ""
+}

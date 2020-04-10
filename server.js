@@ -1,6 +1,7 @@
 'use strict';
 
-const io = require('socket.io').listen(3000);
+const io = require('socket.io').listen(process.env.port || 3000);
+console.log(process.env.port);
 
 var components = require('./modules/Game');
 var gamevars = require('./modules/gamevars');

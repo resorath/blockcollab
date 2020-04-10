@@ -1,9 +1,9 @@
 var battle = new Phaser.Scene('Battle');
 var Matter = Phaser.Physics.Matter.Matter;
 
-battle.gems = {}
+battle.gems = {};
 
-battle.board = {}
+battle.board = {};
 battle.boardState = {
     ready: false,
     initiallyPopulated: false,
@@ -14,7 +14,7 @@ battle.dragState = {
     currentDragLock: 'none',
     startX: 0,
     startY: 0
-}
+};
 
 battle.dragwidth = 80;
 

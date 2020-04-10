@@ -36,7 +36,10 @@ function randInRange(f, c)
     return rng.frac() * (c - f + 1) + f;
 }
 
-var socket = io("http://10.0.1.20:3000");
+var port = process.env.PORT || 3000;
+var host = "https://blockcollab.azurewebsites.net" + port;
+
+var socket = io(host);
 
 socket.io.on('connect_error', function(err) {
     // handle server error here
