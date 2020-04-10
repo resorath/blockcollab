@@ -3,9 +3,7 @@
 
 var app = require('express')();
 var http = require('http').Server(app);
-
 const io = require('socket.io')(http);
-
 
 var components = require('./modules/Game');
 var gamevars = require('./modules/gamevars');
@@ -18,7 +16,6 @@ var cfunc = require('./modules/commands');
 var EventEmitter = require('events');
 
 gamevars.games = [];
-
 
 // matchmaking sockets
 var matchmakingqueue = [];
