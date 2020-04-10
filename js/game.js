@@ -25,9 +25,6 @@ var config = {
 var rng = new Phaser.Math.RandomDataGenerator();
 var player = 0;
 
-
-
-
 var game = new Phaser.Game(config);
 
 
@@ -36,8 +33,8 @@ function randInRange(f, c)
     return rng.frac() * (c - f + 1) + f;
 }
 
-var port = process.env.PORT || 3000;
-var host = "https://blockcollab.azurewebsites.net" + port;
+var port = 80;
+var host = "https://blockcollab.azurewebsites.net:" + port;
 
 var socket = io(host);
 

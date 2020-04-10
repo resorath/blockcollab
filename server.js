@@ -1,7 +1,11 @@
 'use strict';
 
+
+var app = require('express')();
+var http = require('http').Server(app);
+
 const io = require('socket.io').listen(process.env.port || 3000);
-console.log(process.env.port);
+
 
 var components = require('./modules/Game');
 var gamevars = require('./modules/gamevars');
@@ -25,6 +29,10 @@ class Trigger extends EventEmitter {}
 gamevars.triggers = new Trigger();
 
 var serverVersion = '0.0.1';
+
+app.get('/', function(req, res){
+  res.body("Hello " + process.env.port);
+});
 
 io.on('connection', function(socket){
 
