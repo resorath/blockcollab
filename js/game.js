@@ -33,8 +33,8 @@ function randInRange(f, c)
     return rng.frac() * (c - f + 1) + f;
 }
 
-var port = 80;
-var host = "https://blockcollab.azurewebsites.net:" + port;
+var host = "http://localhost:8000"
+//var host = "https://blockcollab.azurewebsites.net:443/"
 
 var socket = io(host);
 

@@ -4,7 +4,7 @@
 var app = require('express')();
 var http = require('http').Server(app);
 
-const io = require('socket.io').listen(process.env.port || 3000);
+const io = require('socket.io')(http);
 
 
 var components = require('./modules/Game');
@@ -31,7 +31,12 @@ gamevars.triggers = new Trigger();
 var serverVersion = '0.0.1';
 
 app.get('/', function(req, res){
-  res.body("Hello " + process.env.port);
+  res.send("Hello");
+});
+
+var port = process.env.PORT || 8000;
+http.listen(port, function(){
+  console.log('listening on *:' + port);
 });
 
 io.on('connection', function(socket){
