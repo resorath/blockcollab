@@ -341,12 +341,14 @@ battle.getGemCoordinateFromSprite = function(sprite)
     {
         for(var j=0; j < battle.board[i].length; j++)
         {
-            if(battle.board[i][j].sprite == sprite)
+            if(battle.board[i][j] != null && battle.board[i][j].sprite == sprite)
             {
                 return {x: i, y: j};
             }
         }
     }
+
+    return null;
 
 }
 
@@ -458,12 +460,18 @@ battle.addGem = function(gemdata)
 battle.remoteTouchGem = function(coord)
 {
     gem = battle.board[coord.x][coord.y];
+    if(gem == null)
+        return;
+
     gem.sprite.alpha = 0.5;
 },
 
 battle.remoteStopTouchGem = function(coord)
 {
     gem = battle.board[coord.x][coord.y];
+    if(gem == null)
+        return;
+        
     gem.sprite.alpha = 1.0;
 },
 
