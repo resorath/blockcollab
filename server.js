@@ -1,7 +1,8 @@
 'use strict';
 
 
-var app = require('express')();
+var express = require('express');
+var app = express();
 var http = require('http').Server(app);
 const io = require('socket.io')(http);
 
@@ -28,10 +29,12 @@ gamevars.triggers = new Trigger();
 var serverVersion = '0.0.1';
 
 app.get('/', function(req, res){
-  res.send("Hello");
+  res.sendFile(__dirname + '/index.html');
 });
 
-var port = process.env.PORT || 8000;
+app.use(express.static(__dirname + '/'));
+
+var port = process.env.PORT || 80;
 http.listen(port, function(){
   console.log('listening on *:' + port);
 });
