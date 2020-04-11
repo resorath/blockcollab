@@ -41,8 +41,11 @@ function randInRange(f, c)
     return rng.frac() * (c - f + 1) + f;
 }
 
-var host = "http://localhost:8000"
-//var host = "https://blockcollab.azurewebsites.net:443/"
+var host = null;
+if(window.location.href.indexOf("blockcollab.tophatandmonocle.com") > -1)
+    host = "https://blockcollab.azurewebsites.net:443/";
+else
+    host = "http://localhost:8000";
 
 var socket = io(host);
 
