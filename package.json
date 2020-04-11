@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "server.js",
+  "engines": { "node" : ">= 12.15.0"},
   "dependencies": {
     "bufferutil": "^4.0.1",
     "events": "^3.1.0",

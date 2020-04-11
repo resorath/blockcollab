@@ -41,15 +41,13 @@ function randInRange(f, c)
     return rng.frac() * (c - f + 1) + f;
 }
 
-/*var host = ;
-if(window.location.href.indexOf("blockcollab.tophatandmonocle.com") > -1)
-    host = "https://blockcollab.azurewebsites.net:443";
-else
-    host = "http://localhost:8000";
+var socket = null
 
-var socket = io(host, {transports: ['polling', 'websocket']});
-*/
-var socket = io();
+if(window.location.href.indexOf("blockcollab.tophatandmonocle.com") > -1)
+    socket = io(host, {transports: ['polling', 'websocket']});
+else
+    socket = io(); 
+
 
 function checkReadyState()
 {
