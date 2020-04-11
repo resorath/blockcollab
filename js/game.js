@@ -43,11 +43,11 @@ function randInRange(f, c)
 
 var host = null;
 if(window.location.href.indexOf("blockcollab.tophatandmonocle.com") > -1)
-    host = "https://blockcollab.azurewebsites.net:443/";
+    host = "https://blockcollab.azurewebsites.net:443";
 else
     host = "http://localhost:8000";
 
-var socket = io(host);
+var socket = io(host, {transports: ['polling', 'websocket']});
 
 function checkReadyState()
 {
@@ -65,6 +65,10 @@ function gameReadyContinue()
 
     battle.waitText(true, 'Waiting on Matchmaking...');
 }
+
+socket.on('reconnect_attempt', () => {
+    socket.io.opts.transports = ['polling', 'websocket'];
+  });
 
 socket.io.on('connect_error', function(err) {
     // handle server error here
