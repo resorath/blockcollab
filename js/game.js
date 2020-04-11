@@ -24,9 +24,17 @@ var config = {
 
 var rng = new Phaser.Math.RandomDataGenerator();
 var player = 0;
+var readystate = { game: false, socket: false }
 
 var game = new Phaser.Game(config);
 
+
+game.events.on('ready', function(){
+    console.log('booted');
+    battle.waitText(true, 'Waiting on Socket...');
+    readystate.game = true;
+    checkReadyState();
+})
 
 function randInRange(f, c)
 {
@@ -38,17 +46,31 @@ var host = "http://localhost:8000"
 
 var socket = io(host);
 
-socket.io.on('connect_error', function(err) {
-    // handle server error here
-    console.log('Error connecting to server');
-  });
+function checkReadyState()
+{
+    if(readystate.game && readystate.socket)
+    {
+        gameReadyContinue();
+    }
+}
 
-socket.on('connect', function() {
-    console.log(socket.connected);
+function gameReadyContinue()
+{
     socket.emit('control', 'ready');
     // Use matchmaking for now
     socket.emit('join', '');
 
+    battle.waitText(true, 'Waiting on Matchmaking...');
+}
+
+socket.io.on('connect_error', function(err) {
+    // handle server error here
+    console.log('Error connecting to server');
+});
+
+socket.on('connect', function() {
+    readystate.socket = true;
+    checkReadyState();
 });
 
 socket.on('terminal', function(message) {
@@ -106,6 +128,7 @@ socket.on('control', function(msg) {
 socket.on('initialBoardState', function(message) {
     
     console.log("Receiving boardstate")
+    battle.waitText(false, null);
     battle.board = message;
     battle.boardState.ready = true;
 

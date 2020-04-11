@@ -3,6 +3,8 @@ var Matter = Phaser.Physics.Matter.Matter;
 
 battle.gems = {};
 
+battle.ready = false;
+
 battle.board = {};
 battle.boardState = {
     ready: false,
@@ -31,6 +33,7 @@ battle.preload = function()
 
 battle.create = function()
 {
+    this.ready = true;
     this.registerDragHandles();
 },
 
@@ -44,6 +47,20 @@ battle.update = function()
         battle.runAnimationQueue();
 
 
+},
+
+battle.waittext = null;
+battle.waitText = function(iswaiting, text)
+{
+    if(battle.waittext != null)
+        battle.waittext.destroy();
+
+    if(iswaiting)
+    {
+        battle.waittext = battle.add.text(10 , globals.height / 2 - 50, text, {
+            fontSize: 64
+        });
+    }
 },
 
 
