@@ -68,10 +68,6 @@ function gameReadyContinue()
     battle.waitText(true, 'Waiting on Matchmaking...');
 }
 
-socket.on('reconnect_attempt', () => {
-    socket.io.opts.transports = ['polling', 'websocket'];
-  });
-
 socket.io.on('connect_error', function(err) {
     // handle server error here
     console.log('Error connecting to server');
