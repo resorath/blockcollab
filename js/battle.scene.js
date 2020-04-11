@@ -70,7 +70,6 @@ battle.registerDragHandles = function()
     {
         var coord = battle.getGemCoordinateFromSprite(gameObject);
 
-        console.log(coord);
         var command = {
             'action': 'touchgem',
             'activeCoord': coord
@@ -368,6 +367,30 @@ battle.populateInitialGrid = function()
     
 };
 
+battle.hideGems = function()
+{
+    for(var i = 0; i < battle.board.length; i++)
+    {
+        for(var j=0; j < battle.board[i].length; j++)
+        {
+            var sprite = battle.board[i][j].sprite;
+            sprite.alpha = 0;
+        }
+    }
+},
+
+battle.showGems = function()
+{
+    for(var i = 0; i < battle.board.length; i++)
+    {
+        for(var j=0; j < battle.board[i].length; j++)
+        {
+            var sprite = battle.board[i][j].sprite;
+            sprite.alpha = 1;
+        }
+    }
+}
+
 battle.remoteSwap = function(swap)
 {
     this.queueAnimation(function(params) {
@@ -395,7 +418,7 @@ battle.remoteSwap = function(swap)
         });
     }, 'swap', 0, 1000, {swap}); 
 
-}
+},
 
 battle.remoteDestroy = function(coords)
 {
@@ -456,6 +479,34 @@ battle.addGem = function(gemdata)
     }, 'adddrop', 1, 300, {gemdata});
 
 },
+
+battle.showAvailableMove = function(coord)
+{
+    this.queueAnimation(function(params) {
+        var i = params.coord.x;
+        var j = params.coord.y;
+        var gem = battle.board[i][j];
+
+        if(gem == null)
+            return;
+
+        var spriteOverlay = battle.add.sprite(i * battle.dragwidth, j * battle.dragwidth, gem.imagePath).setOrigin(0, 0).setTintFill(0xffffff);
+        spriteOverlay.alpha = 0;
+
+        battle.tweens.add({
+            targets: spriteOverlay,
+            alpha: 0.75,
+            ease: 'Cubic.easeOut',
+            duration: 1000,
+            yoyo: true,
+            repeat: 0,
+            onComplete: function() {
+                spriteOverlay.destroy();
+            }
+        })
+            
+    }, 'availablemove', 1, 1000, {coord})
+}
 
 battle.remoteTouchGem = function(coord)
 {

@@ -39,8 +39,20 @@ module.exports = {
                 gameboard.boardCleanupAndNotify(game);
 
                 gameboard.boardDropGemsAndBackfillAndNotify(game);
+
+
             }
             while(sequencesRemain);
+
+            var position = gameboard.checkAnyValidMovesRemain(game.board);
+            if(position == null)
+            {
+                console.log("WARN: Stalemate");
+            }
+            else
+            {
+                speaker.sendAvailableMove(game, position);
+            }
 
         }
         else

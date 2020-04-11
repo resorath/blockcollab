@@ -73,8 +73,6 @@ io.on('connection', function(socket){
           {
             console.log('Removing game ' + agame.name + ' because it is out of players');
             execution.quitGame(agame);
-
-  
           }
   
           // can't resume a game if it hasn't started, so kill the game.

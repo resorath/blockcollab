@@ -19,6 +19,11 @@ module.exports = {
     sendStopTouchGem: function(socket, coord)
     {
         socket.emit('stoptouchgem', coord);
+    },
+
+    sendAvailableMove: function(game, coord)
+    {
+        game.io.to(game.name).emit('availablemove', coord);
     }
 
 }

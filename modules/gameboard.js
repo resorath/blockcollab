@@ -190,6 +190,38 @@ module.exports = {
 
         return foundAtLeastOneSequence;
 
+    },
+
+    checkAnyValidMovesRemain: function(board) {
+        // skip over edges, there will always be a neighbour in all directions
+        for(var x=1; x < board.length - 1; x++)
+        {
+            for(var y=1; y < board[x].length - 1; y++)
+            {
+                // check if left and right neighbours are same, with top or bottom colour available
+                if(board[x-1][y].name == board[x+1][y].name &&
+                   (board[x][y+1].name == board[x-1][y].name || board[x][y-1].name == board[x-1][y].name))
+                    return {x,y};
+
+                // check if top and bottom neighbours are the same, with left or right colour available
+                if(board[x][y-1].name == board[x][y+1].name &&
+                    (board[x-1][y].name == board[x][y-1].name || board[x+1][y].name == board[x][y-1].name))
+                    return {x,y};
+
+                // check if im the same as left, with top right or bottom right colour available
+                if(board[x][y].name == board[x-1][y].name &&
+                    (board[x+1][y+1].name == board[x][y].name || board[x+1][y-1].name == board[x][y].name))
+                    return {x,y};
+
+                // check if im the same as right, with top left or bottom left colour available
+                if(board[x][y].name == board[x+1][y].name &&
+                    (board[x-1][y+1].name == board[x][y].name || board[x-1][y-1].name == board[x][y].name))
+                    return {x,y};         
+                
+            }
+        }
+
+        return null;
     }
 
     

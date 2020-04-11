@@ -26,11 +26,19 @@ var rng = new Phaser.Math.RandomDataGenerator();
 var player = 0;
 var readystate = { game: false, socket: false }
 
+console.log("%c  %c  %c  %c  %c  %c  %c  BlockCollab ",
+    "background-color: yellow;",
+    "background-color: red;",
+    "background-color: teal;",
+    "background-color: purple;",
+    "background-color: limegreen;",
+    "background-color: skyblue;",
+    "background-color: black; color: white;")
+
 var game = new Phaser.Game(config);
 
 
 game.events.on('ready', function(){
-    console.log('booted');
     battle.waitText(true, 'Waiting on Socket...');
     readystate.game = true;
     checkReadyState();
@@ -51,6 +59,7 @@ else
 
 function checkReadyState()
 {
+    console.log(readystate)
     if(readystate.game && readystate.socket)
     {
         gameReadyContinue();
@@ -69,6 +78,7 @@ function gameReadyContinue()
 socket.io.on('connect_error', function(err) {
     // handle server error here
     console.log('Error connecting to server');
+    console.log(err);
 });
 
 socket.on('connect', function() {
@@ -100,10 +110,14 @@ socket.on('control', function(msg) {
 
     if(msg.command == "opponentleft")
     {
+        battle.hideGems();
+        battle.waitText(true, 'Waiting on Opponent...');
     }
 
     if(msg.command == "resumegame")
     {
+        battle.showGems();
+        battle.waitText(false, null);
     }
 
     if(msg.command == "suspend")
@@ -165,4 +179,9 @@ socket.on('touchgem', function(coords) {
 socket.on('stoptouchgem', function(coords) {
     console.log("Receive stop touch gem " + JSON.stringify(coords));
     battle.remoteStopTouchGem(coords);
+})
+
+socket.on('availablemove', function(coords) {
+    console.log("Receive available move " + JSON.stringify(coords));
+    battle.showAvailableMove(coords);
 })
