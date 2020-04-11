@@ -211,12 +211,12 @@ module.exports = {
                 // check if im the same as left, with top right or bottom right colour available
                 if(board[x][y].name == board[x-1][y].name &&
                     (board[x+1][y+1].name == board[x][y].name || board[x+1][y-1].name == board[x][y].name))
-                    return {x,y};
+                    return {x:x+1,y};
 
                 // check if im the same as right, with top left or bottom left colour available
                 if(board[x][y].name == board[x+1][y].name &&
                     (board[x-1][y+1].name == board[x][y].name || board[x-1][y-1].name == board[x][y].name))
-                    return {x,y};         
+                    return {x:x-1,y};         
                 
             }
         }
