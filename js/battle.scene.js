@@ -51,7 +51,15 @@ battle.registerDragHandles = function()
 {
     this.input.on('dragstart', function (pointer, gameObject)
     {
+        var coord = battle.getGemCoordinateFromSprite(gameObject);
 
+        console.log(coord);
+        var command = {
+            'action': 'touchgem',
+            'activeCoord': coord
+        }
+
+        socket.emit('command', command);
     });
 
     this.input.on('drag', function (pointer, gameObject, dragX, dragY) {
@@ -149,10 +157,17 @@ battle.registerDragHandles = function()
 
     this.input.on('dragend', function (pointer, gameObject)
     {
+        var selfCoords = battle.getGemCoordinateFromSprite(gameObject);
+
+        var command = {
+            'action': 'stoptouchgem',
+            'activeCoord': selfCoords
+        }
+
+        socket.emit('command', command);
+
         if(battle.dragState.currentDragLock == 'left')
         {
-            var selfCoords = battle.getGemCoordinateFromSprite(gameObject);
-
             if(selfCoords.x != 0)
             {                   
                 var neighbour = battle.board[selfCoords.x - 1][selfCoords.y];
@@ -180,8 +195,6 @@ battle.registerDragHandles = function()
         }
         else if(battle.dragState.currentDragLock == 'right')
         {
-            var selfCoords = battle.getGemCoordinateFromSprite(gameObject);
-
             if(selfCoords.x != battle.board[0].length - 1)
             {
                 var neighbour = battle.board[selfCoords.x + 1][selfCoords.y];
@@ -210,8 +223,6 @@ battle.registerDragHandles = function()
 
         else if(battle.dragState.currentDragLock == 'up')
         {
-            var selfCoords = battle.getGemCoordinateFromSprite(gameObject);
-
             if(selfCoords.y != 0)
             {
                 var neighbour = battle.board[selfCoords.x][selfCoords.y - 1];
@@ -241,8 +252,6 @@ battle.registerDragHandles = function()
 
         }else if(battle.dragState.currentDragLock == 'down')
         {
-            var selfCoords = battle.getGemCoordinateFromSprite(gameObject);
-
             if(selfCoords.y != battle.board[selfCoords.x][0].length - 1)
             {
                 var neighbour = battle.board[selfCoords.x][selfCoords.y + 1];
@@ -427,7 +436,19 @@ battle.addGem = function(gemdata)
 
     }, 'adddrop', 1, 300, {gemdata});
 
-}
+},
+
+battle.remoteTouchGem = function(coord)
+{
+    gem = battle.board[coord.x][coord.y];
+    gem.sprite.alpha = 0.5;
+},
+
+battle.remoteStopTouchGem = function(coord)
+{
+    gem = battle.board[coord.x][coord.y];
+    gem.sprite.alpha = 1.0;
+},
 
 battle.animationQueue = [];
 battle.animationRunning = false;

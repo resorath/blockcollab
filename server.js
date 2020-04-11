@@ -99,7 +99,7 @@ io.on('connection', function(socket){
       if(!agame.everyoneConnected())
         return;
   
-      console.log(agame.name + '-' + socket.player + ': ' + msg);
+      console.log(agame.name + '-' + socket.player + ': ' + JSON.stringify(msg));
       
       parseCommand(msg, socket);
   
@@ -310,8 +310,8 @@ function parseCommand(command, socket)
     cfunc[action](socket, command)
   else
   {
-    socket.emit('terminal', 'unknown command: \'' + action + '\' try \'help\'\n');
-    console.log("Command " + command + " not recognized by " + socket.game + ":" + socket.player);
+    socket.emit('terminal', 'unknown command: \'' + JSON.stringify(action) + '\' try \'help\'\n');
+    console.log("Command " + JSON.stringify(command) + " not recognized by " + socket.game + ":" + socket.player);
   }
 }
 

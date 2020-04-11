@@ -129,5 +129,14 @@ socket.on('drop', function(coords) {
 socket.on('newgem', function(gemdata) {
     console.log("Receive gem " + JSON.stringify(gemdata));
     battle.addGem(gemdata);
-})
+});
 
+socket.on('touchgem', function(coords) {
+    console.log("Receive touch gem " + JSON.stringify(coords));
+    battle.remoteTouchGem(coords);
+});
+
+socket.on('stoptouchgem', function(coords) {
+    console.log("Receive stop touch gem " + JSON.stringify(coords));
+    battle.remoteStopTouchGem(coords);
+})

@@ -13,6 +13,12 @@ module.exports = {
 	        a[j] = x;
 	    }
 	},
+	
+	clone(obj)
+	{
+		return JSON.parse(JSON.stringify(obj));
+	},
+
 
 	// Zero-based random number
 	// e.g. max = 2 is 1 in 2 chance when checking 0. 

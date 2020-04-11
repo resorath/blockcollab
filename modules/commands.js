@@ -17,7 +17,7 @@ module.exports = {
         }
 
         // verify neighbours
-        if(gameboard.isNeighbour(r_active, r_neighbour))
+        if(gameboard.isNeighbour(r_active, r_neighbour) && gameboard.isLegalMove(game.board, r_active, r_neighbour))
         {
             console.log("valid swap");
 
@@ -34,7 +34,7 @@ module.exports = {
             var sequencesRemain = false;
             do
             {
-                sequencesRemain = gameboard.boardFlagSequence(game.board);
+                sequencesRemain = gameboard.checkBoardSequence(game.board, true);
 
                 gameboard.boardCleanupAndNotify(game);
 
@@ -47,9 +47,37 @@ module.exports = {
         {
             console.log('invalid swap');
             // reject change
+            var oppositeswap = {
+                'activeCoord': r_neighbour,
+                'neighbourCoord': r_active
+            }
+
+            speaker.sendBoardMove(socket, oppositeswap);
 
         }
         
+    },
+
+    touchgem(socket, command)
+    {
+        var game = helpers.getGameBySocket(socket);
+
+        var coord = command.activeCoord;
+
+        var opposite = helpers.getOppositePlayerSocket(socket);
+
+        speaker.sendTouchGem(opposite, coord);
+    },
+
+    stoptouchgem(socket, command)
+    {
+        var game = helpers.getGameBySocket(socket);
+
+        var coord = command.activeCoord;
+
+        var opposite = helpers.getOppositePlayerSocket(socket);
+
+        speaker.sendStopTouchGem(opposite, coord);
     }
 
 }

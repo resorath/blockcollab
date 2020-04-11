@@ -21,7 +21,7 @@ module.exports = {
         do
         {
             nosequence = true;   
-            this.boardFlagSequence(board);
+            this.checkBoardSequence(board, true);
             
             for(var i = 0; i < rows; i++)
             {
@@ -48,9 +48,27 @@ module.exports = {
         return JSON.parse(JSON.stringify(gems[gemKeys[pick]]));
     },
     
+    // determine if two coordinates are neighbours
     isNeighbour: function(coord1, coord2)
     {
         return ((coord1.x == coord2.x && Math.abs(coord1.y - coord2.y) == 1) || (coord1.y == coord2.y && Math.abs(coord1.x - coord2.x) == 1));
+    },
+
+    // determine if a move will result in gems being matched
+    isLegalMove: function(board, origin, neighbour)
+    {
+        // clone the board
+        var simulationboard = util.clone(board);
+
+        // do the swap
+        origin_g = simulationboard[origin.x][origin.y]
+        neighbour_g =  simulationboard[neighbour.x][neighbour.y];
+
+        simulationboard[origin.x][origin.y] = neighbour_g;
+        simulationboard[neighbour.x][neighbour.y] = origin_g;
+
+        // test
+        return this.checkBoardSequence(simulationboard, false);
     },
 
     // delete gems that are flagged as sequenced
@@ -107,10 +125,10 @@ module.exports = {
     },
 
     // flags sequenced gems
-    boardFlagSequence: function(board)
+    checkBoardSequence: function(board, flagSequence)
     {
-        console.log("checking sequence");
-        console.log(board[0][0].name);
+        //console.log("checking sequence");
+        //console.log(board[0][0].name);
         var foundAtLeastOneSequence = false;
         for(var x=0; x < board.length; x++)
         {
@@ -160,7 +178,8 @@ module.exports = {
 
                 if(hcount >= 3 || vcount >=3)
                 {
-                    board[x][y].insequence = true;
+                    if(flagSequence)
+                        board[x][y].insequence = true;
                     foundAtLeastOneSequence = true;
                     //console.log("detected colour: " + self + " x: " + x + " y: " + y);
                 }
