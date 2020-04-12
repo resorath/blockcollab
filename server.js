@@ -28,9 +28,9 @@ gamevars.triggers = new Trigger();
 
 var serverVersion = '0.0.1';
 
-app.get('/', function(req, res){
+/*app.get('/', function(req, res){
   res.sendFile(__dirname + '/index.html');
-});
+});*/
 
 app.use(express.static(__dirname + '/'));
 
