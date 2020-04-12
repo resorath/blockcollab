@@ -1,6 +1,4 @@
 var battle = new Phaser.Scene('Battle');
-var Matter = Phaser.Physics.Matter.Matter;
-
 battle.gems = {};
 
 battle.ready = false;
@@ -69,6 +67,8 @@ battle.registerDragHandles = function()
     this.input.on('dragstart', function (pointer, gameObject)
     {
         var coord = battle.getGemCoordinateFromSprite(gameObject);
+
+        gameObject.alpha = 0.5;
 
         var command = {
             'action': 'touchgem',
@@ -173,6 +173,8 @@ battle.registerDragHandles = function()
 
     this.input.on('dragend', function (pointer, gameObject)
     {
+        gameObject.alpha = 1;
+
         var selfCoords = battle.getGemCoordinateFromSprite(gameObject);
 
         var command = {

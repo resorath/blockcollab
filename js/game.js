@@ -19,6 +19,9 @@ var config = {
             debug: false,
         }
     },
+    dom: {
+        createContainer: true
+    },
     scene: [battle]
 };
 

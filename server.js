@@ -348,7 +348,7 @@ gamevars.triggers.on('matchmaking', function(socket) {
 
   
 
-// do things every 0.5 seconds
+// do things every 2 seconds
 setInterval(function() {
 
     for(var i=0; i<gamevars.games.length; i++)
@@ -357,22 +357,7 @@ setInterval(function() {
 
         if(game.started)
         {
-            var asteroid = {
-                position: {
-                    x: rand(200, 1800),
-                    y: rand(50, 800)
-                },
-                size: 1,
-                velocity: {
-                    x: rand(-2, 2),
-                    y: rand(-2, 2)
-                }
-            };
 
-            for(var j=0;j<game.sockets.length;j++)
-            {
-                game.sockets[j].emit('asteroid.make', asteroid);
-            }
         }
     }
 
