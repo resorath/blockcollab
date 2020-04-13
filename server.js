@@ -4,9 +4,27 @@ var fs = require('fs');
 var express = require('express');
 var app = express();
 var https = require('https');
+
+var privateKey = null;
+var certificate =  null
+var ca = null;
+
+try
+{
+  privateKey = fs.readFileSync('/etc/letsencrypt/live/yourdomain.com/privkey.pem', 'utf8');
+  certificate = fs.readFileSync('/etc/letsencrypt/live/yourdomain.com/cert.pem', 'utf8');
+  ca = fs.readFileSync('/etc/letsencrypt/live/yourdomain.com/chain.pem', 'utf8');
+}
+catch(e)
+{
+  privateKey = fs.readFileSync('./key.key');
+  certificate = fs.readFileSync('./cert.crt');
+}
+
 var server = https.createServer({
-  key: fs.readFileSync('./key.key'),
-  cert: fs.readFileSync('./cert.crt'),
+  key: privateKey,
+  cert: certificate,
+  ca: ca,
   requestCert: false,
   rejectUnauthorized: false
 },app);
