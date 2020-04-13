@@ -55,7 +55,7 @@ function randInRange(f, c)
 var socket = null
 
 if(window.location.href.indexOf("blockcollab.tophatandmonocle.com") > -1)
-    socket = io('http://52.233.21.90/', {transports: ['polling', 'websocket']});
+    socket = io('https://52.233.21.90/', {transports: ['polling', 'websocket'], rejectUnauthorized: false});
 else
     socket = io(); 
 

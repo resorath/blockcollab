@@ -1,10 +1,16 @@
 'use strict';
 
-
+var fs = require('fs');
 var express = require('express');
 var app = express();
-var http = require('http').Server(app);
-const io = require('socket.io')(http);
+var https = require('https');
+var server = https.createServer({
+  key: fs.readFileSync('./key.key'),
+  cert: fs.readFileSync('./cert.crt'),
+  requestCert: false,
+  rejectUnauthorized: false
+},app);
+const io = require('socket.io')(server);
 
 var components = require('./modules/Game');
 var gamevars = require('./modules/gamevars');
@@ -34,8 +40,8 @@ var serverVersion = '0.0.1';
 
 app.use(express.static(__dirname + '/'));
 
-var port = process.env.PORT || 80;
-http.listen(port, function(){
+var port = process.env.PORT || 443;
+server.listen(port, function(){
   console.log('listening on *:' + port);
 });
 
