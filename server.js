@@ -11,9 +11,9 @@ var ca = null;
 
 try
 {
-  privateKey = fs.readFileSync('/etc/letsencrypt/live/yourdomain.com/privkey.pem', 'utf8');
-  certificate = fs.readFileSync('/etc/letsencrypt/live/yourdomain.com/cert.pem', 'utf8');
-  ca = fs.readFileSync('/etc/letsencrypt/live/yourdomain.com/chain.pem', 'utf8');
+  privateKey = fs.readFileSync('/etc/letsencrypt/live/blockcollab.nodejs.tophatandmonocle.com/privkey.pem', 'utf8');
+  certificate = fs.readFileSync('/etc/letsencrypt/live/blockcollab.nodejs.tophatandmonocle.com/cert.pem', 'utf8');
+  ca = fs.readFileSync('/etc/letsencrypt/live/blockcollab.nodejs.tophatandmonocle.com/chain.pem', 'utf8');
 }
 catch(e)
 {
