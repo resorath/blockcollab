@@ -225,7 +225,7 @@ module.exports = {
                     (board[x+1][y+1].name == board[x][y].name))
                     return [{x:x+1,y}, {x: x+1, y: y+1}];
 
-                if(x <= board.length - 2 && board[x+2][y] != null) 
+                if(x < board.length - 2 && board[x+2][y] != null) 
                 {
                     if(board[x][y].name == board[x-1][y].name &&
                         (board[x+2][y].name == board[x][y].name))
@@ -249,7 +249,7 @@ module.exports = {
                 }
 
                 // check if I'm the same as the bottom, with far top available
-                if(y <= board[x].length -2 && board[x][y+2] != null)
+                if(y < board[x].length -2 && board[x][y+2] != null)
                 {
                     if(board[x][y].name == board[x][y-1].name &&
                         (board[x][y].name == board[x][y+2].name))

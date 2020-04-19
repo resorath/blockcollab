@@ -35,7 +35,7 @@ module.exports = {
       // verify neighbours
       if(gameboard.isNeighbour(activeCoord, neighbourCoord) && gameboard.isLegalMove(game.board, activeCoord, neighbourCoord))
       {
-          console.log("valid swap");
+          //console.log("valid swap");
 
           var s_active = game.board[activeCoord.x][activeCoord.y]
           var s_neighbour = game.board[neighbourCoord.x][neighbourCoord.y]

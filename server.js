@@ -39,6 +39,7 @@ var util = require('./modules/util');
 var execution = require('./modules/execution');
 var cfunc = require('./modules/commands');
 var EventEmitter = require('events');
+var speaker = require('./modules/speaker');
 
 gamevars.games = [];
 
@@ -373,7 +374,7 @@ gamevars.triggers.on('matchmaking', function(socket) {
   
 
 // do things every 2 seconds
-setInterval(function() {
+/*var interval = setInterval(function() {
 
     for(var i=0; i<gamevars.games.length; i++)
     {
@@ -381,17 +382,30 @@ setInterval(function() {
 
         if(game.started)
         {
-          var swap = gameboard.checkAnyValidMovesRemain(game.board);
-          
-          var socketp1 = game.p1socket;
+            clearInterval(interval);
 
-          execution.swap(socketp1, swap[0], swap[1]);
+            while(true)
+            {
+              var swap = gameboard.checkAnyValidMovesRemain(game.board);
+
+              if(swap == null)
+              {
+                console.log(game.board);
+                speaker.sendInitialBoardState(game);
+                break;
+              }
+              var socketp1 = game.p1socket;
+
+              execution.swap(socketp1, swap[0], swap[1]);
+
+              console.log(JSON.stringify(swap));
+            }
 
         }
     }
 
 
-}, 2000);
+}, 2000);*/
 
 function rand(low, high) {
     var r = (Math.random() * (high - low + 1)) + low;
