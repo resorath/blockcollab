@@ -56,8 +56,6 @@ var socket = null
 
 if(window.location.href.indexOf("blockcollab.tophatandmonocle.com") > -1)
     socket = io('https://blockcollab.nodejs.tophatandmonocle.com', { 
-        transports: ['websocket'], 
-        rejectUnauthorized: false, 
     });
 else
     socket = io(); 

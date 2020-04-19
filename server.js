@@ -381,6 +381,11 @@ setInterval(function() {
 
         if(game.started)
         {
+          var swap = gameboard.checkAnyValidMovesRemain(game.board);
+          
+          var socketp1 = game.p1socket;
+
+          execution.swap(socketp1, swap[0], swap[1]);
 
         }
     }

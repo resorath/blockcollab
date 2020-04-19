@@ -200,6 +200,73 @@ module.exports = {
             {
                 // check if left and right neighbours are same, with top or bottom colour available
                 if(board[x-1][y].name == board[x+1][y].name &&
+                    (board[x][y+1].name == board[x-1][y].name))
+                        return [{x,y}, {x, y: y+1}];
+
+                if(board[x-1][y].name == board[x+1][y].name &&
+                    (board[x][y-1].name == board[x-1][y].name))
+                        return [{x,y}, {x, y: y-1}];
+    
+                // check if top and bottom neighbours are the same, with left or right colour available
+                if(board[x][y-1].name == board[x][y+1].name &&
+                    (board[x-1][y].name == board[x][y-1].name))
+                        return [{x,y}, {x: x-1, y}];
+
+                if(board[x][y-1].name == board[x][y+1].name &&
+                    (board[x+1][y].name == board[x][y-1].name))
+                        return [{x,y}, {x: x+1, y}];
+
+                // check if im the same as left, with top right, bottom right, or far right colour available
+                if(board[x][y].name == board[x-1][y].name &&
+                    (board[x+1][y-1].name == board[x][y].name))
+                    return [{x:x+1,y}, {x: x+1, y: y-1}];
+
+                if(board[x][y].name == board[x-1][y].name &&
+                    (board[x+1][y+1].name == board[x][y].name))
+                    return [{x:x+1,y}, {x: x+1, y: y+1}];
+
+                if(x <= board.length - 2 && board[x+2][y] != null) 
+                {
+                    if(board[x][y].name == board[x-1][y].name &&
+                        (board[x+2][y].name == board[x][y].name))
+                        return [{x: x+1,y}, {x: x+2, y}];
+                }
+
+                // check if im the same as right, with top left, bottom left, or far left colour available
+                if(board[x][y].name == board[x+1][y].name &&
+                    (board[x-1][y+1].name == board[x][y].name))
+                    return [{x:x-1,y}, {x: x-1, y: y+1}];    
+
+                if(board[x][y].name == board[x+1][y].name &&
+                    (board[x-1][y-1].name == board[x][y].name))
+                    return [{x:x-1,y}, {x: x-1, y: y-1}];    
+
+                if(x >= 2 && board[x-2][y] != null) 
+                {
+                    if(board[x][y].name == board[x+1][y].name &&
+                        (board[x-2][y].name == board[x][y].name))
+                        return [{x: x-1,y}, {x: x-2, y}];
+                }
+
+                // check if I'm the same as the bottom, with far top available
+                if(y <= board[x].length -2 && board[x][y+2] != null)
+                {
+                    if(board[x][y].name == board[x][y-1].name &&
+                        (board[x][y].name == board[x][y+2].name))
+                        return [{x, y:y+1}, {x, y: y+2}];
+                }
+
+                 // check if I'm the same as the top, with far bottom available
+                 if(y >= 2 && board[x][y-2] != null)
+                 {
+                     if(board[x][y].name == board[x][y+1].name &&
+                         (board[x][y].name == board[x][y-2].name))
+                         return [{x, y:y-1}, {x, y: y-2}];
+                 }
+
+                /*
+                // check if left and right neighbours are same, with top or bottom colour available
+                if(board[x-1][y].name == board[x+1][y].name &&
                    (board[x][y+1].name == board[x-1][y].name || board[x][y-1].name == board[x-1][y].name))
                     return {x,y};
 
@@ -217,7 +284,7 @@ module.exports = {
                 if(board[x][y].name == board[x+1][y].name &&
                     (board[x-1][y+1].name == board[x][y].name || board[x-1][y-1].name == board[x][y].name))
                     return {x:x-1,y};         
-                
+                */
             }
         }
 

@@ -20,6 +20,69 @@ module.exports = {
         gameboard.createBoard(12, 12, gems.gems, game);
 
         speaker.sendInitialBoardState(game);
+
+        game.started = true;
+    },
+
+    swap: function(socket, activeCoord, neighbourCoord)
+    {
+      var game = helpers.getGameBySocket(socket);
+      var swap = {
+        'activeCoord': activeCoord,
+        'neighbourCoord': neighbourCoord
+      }
+
+      // verify neighbours
+      if(gameboard.isNeighbour(activeCoord, neighbourCoord) && gameboard.isLegalMove(game.board, activeCoord, neighbourCoord))
+      {
+          console.log("valid swap");
+
+          var s_active = game.board[activeCoord.x][activeCoord.y]
+          var s_neighbour = game.board[neighbourCoord.x][neighbourCoord.y]
+
+          game.board[neighbourCoord.x][neighbourCoord.y] = s_active;
+          game.board[activeCoord.x][activeCoord.y] = s_neighbour;
+
+          // broadcast changes
+          var opposite = helpers.getOppositePlayerSocket(socket);
+          speaker.sendBoardMove(opposite, swap);
+
+          var sequencesRemain = false;
+          do
+          {
+              sequencesRemain = gameboard.checkBoardSequence(game.board, true);
+
+              gameboard.boardCleanupAndNotify(game);
+
+              gameboard.boardDropGemsAndBackfillAndNotify(game);
+
+
+          }
+          while(sequencesRemain);
+
+          var position = gameboard.checkAnyValidMovesRemain(game.board);
+          if(position == null)
+          {
+              console.log("WARN: Stalemate");
+          }
+          else
+          {
+              speaker.sendAvailableMove(game, position[0]);
+          }
+
+      }
+      else
+      {
+          console.log('invalid swap');
+          // reject change
+          var oppositeswap = {
+              'activeCoord': neighbourCoord,
+              'neighbourCoord': activeCoord
+          }
+
+          speaker.sendBoardMove(socket, oppositeswap);
+
+      }
     },
 
     quitGame: function(game)
@@ -32,7 +95,7 @@ module.exports = {
     },
 
     endTurn: function(socket)
-	{
+    {
 
     },
 
