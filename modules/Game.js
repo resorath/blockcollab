@@ -10,7 +10,7 @@ module.exports = {
       this.playerTurn = 0;
   
       // and whos its not...
-      this.playerTurnOpposite = function() { return (this.playerTurn == 1 ? 2 : 1) };
+      this.playerTurnOpposite = function() { return (this.playerTurn == 1 ? 2 : 1); };
   
       // the IO object attached to this game
       this.io = null;
@@ -71,7 +71,7 @@ module.exports = {
           emotes: null,
           lastemote: 0,
         }
-      }
+      };
   
       // an array of card callbacks to be run when a card is played, attacks, or dies
       // header: callbackfunction(socket, card, action)
@@ -86,7 +86,7 @@ module.exports = {
       this.mulligan = {
         p1: [],
         p2: []
-      }
+      };
   
   
       // turn timer
@@ -111,7 +111,7 @@ module.exports = {
           return this.board.p1;
         else
           return this.board.p2;
-      }
+      };
   
       this.getDeck = function (socket, getOppositeDeck)
       {
@@ -119,7 +119,7 @@ module.exports = {
           return this.deck.p1;
         else
           return this.deck.p2;
-      }
+      };
   
       this.getPlayer = function (socket, getOppositePlayer)
       {
@@ -127,7 +127,7 @@ module.exports = {
           return this.player.p1;
         else
           return this.player.p2;
-      }
+      };
   
       this.getSocketByPlayerNumber = function (num)
       {
@@ -137,19 +137,19 @@ module.exports = {
           return this.p2socket;
   
         return null;
-      }
+      };
   
       this.everyoneConnected = function()
       {
         return (this.p1socket != null && this.p2socket != null);
-      }
+      };
   
      
   
       this.isPlayerTurn = function (socket)
       {
-        return (socket.player == this.playerTurn)
-      }
+        return (socket.player == this.playerTurn);
+      };
   
       this.currentPlayer = function()
       {
@@ -157,7 +157,7 @@ module.exports = {
           return this.player.p1;
         else
           return this.player.p2;
-      }
+      };
   
       this.oppositePlayer = function()
       {
@@ -165,8 +165,8 @@ module.exports = {
           return this.player.p2;
         else
           return this.player.p1;
-      }
+      };
   
   
     }
-  }
+  };

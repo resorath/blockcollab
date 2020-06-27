@@ -15,7 +15,7 @@ module.exports = {
         // start timer
         this.activateTurnTimer(game);
         
-        console.log("Starting game")
+        console.log('Starting game');
 
         gameboard.createBoard(12, 12, gems.gems, game);
 
@@ -30,16 +30,16 @@ module.exports = {
       var swap = {
         'activeCoord': activeCoord,
         'neighbourCoord': neighbourCoord
-      }
+      };
 
       // verify neighbours
       if(gameboard.isNeighbour(activeCoord, neighbourCoord) && gameboard.isLegalMove(game.board, activeCoord, neighbourCoord))
       {
           //console.log("valid swap");
 
-          var s_active = game.board[activeCoord.x][activeCoord.y]
-          var s_neighbour = game.board[neighbourCoord.x][neighbourCoord.y]
-
+          var s_active = game.board[activeCoord.x][activeCoord.y];
+          var s_neighbour = game.board[neighbourCoord.x][neighbourCoord.y];
+ 
           game.board[neighbourCoord.x][neighbourCoord.y] = s_active;
           game.board[activeCoord.x][activeCoord.y] = s_neighbour;
 
@@ -63,7 +63,7 @@ module.exports = {
           var position = gameboard.checkAnyValidMovesRemain(game.board);
           if(position == null)
           {
-              console.log("WARN: Stalemate");
+              console.log('WARN: Stalemate');
           }
           else
           {
@@ -78,7 +78,7 @@ module.exports = {
           var oppositeswap = {
               'activeCoord': neighbourCoord,
               'neighbourCoord': activeCoord
-          }
+          };
 
           speaker.sendBoardMove(socket, oppositeswap);
 
@@ -87,7 +87,7 @@ module.exports = {
 
     quitGame: function(game)
     {
-        game.io.to(game.name).emit("control", {command: "endgame"} );
+        game.io.to(game.name).emit('control', {command: 'endgame'} );
 
         util.filterInPlace(gamevars.games, function (el) {
           return el.name != game.name;
@@ -126,4 +126,4 @@ module.exports = {
 	  }, agame.turntimer * 1000);
 	},
 
-}
+};
